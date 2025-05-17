@@ -385,7 +385,12 @@
         body: JSON.stringify(formData)
       });
 
-      if (!res.ok) throw new Error(`Status ${res.status}`);
+      if (!res.ok) {
+          // read the server’s exact response body for debugging
+          const errText = await res.text().catch(()=> '(no body)');
+          console.error('🚨 [join] returned', res.status, errText);
+          throw new Error(errText || `HTTP ${res.status}`);
+        }
       alert('Thank you! We’ll contact you soon.');
       joinForm.reset();
 
