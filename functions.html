@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>Functions and Responsibilities - ASHRAE Club</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Tailwind CSS with Dark Mode Support -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom Styles -->
+    <style>
+        body {
+                transition: background 0.5s, color 0.5s;
+                font-family: 'Poppins', sans-serif;
+            }
+
+            /* Dark Theme Styles */
+            [data-theme="dark"] body {
+                background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+                color: #e8f5e9;
+            }
+
+            [data-theme="dark"] header {
+                background-color: rgba(31, 41, 55, 0.9);
+            }
+
+            [data-theme="dark"] .navbar a {
+                color: #e8f5e9;
+            }
+
+            [data-theme="dark"] .navbar a:hover {
+                color: #38ef7d;
+            }
+
+            [data-theme="dark"] .logo {
+                opacity: 0.7;
+            }
+
+            [data-theme="dark"] footer {
+                background: linear-gradient(90deg, #0f2027, #2c5364);
+            }
+
+            [data-theme="dark"] .btn-green {
+                background: linear-gradient(90deg, #11998e, #38ef7d);
+                color: white;
+                padding: 0.8rem 2.5rem;
+                border-radius: 9999px;
+                transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+                box-shadow: 0 4px 15px rgba(56, 239, 125, 0.5);
+            }
+
+            [data-theme="dark"] .btn-green:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 20px rgba(56, 239, 125, 0.8);
+            }
+
+            [data-theme="dark"] #contact-modal {
+                background-color: rgba(0, 0, 0, 0.8);
+            }
+
+            [data-theme="dark"] .text-gray-100 {
+                color: #e8f5e9;
+            }
+
+            /* Light Theme Styles */
+            [data-theme="light"] body {
+                background: linear-gradient(to bottom, #caf0f8, #ade8f4, #90e0ef);
+                color: #000000; /* General text black */
+            }
+
+            [data-theme="light"] header {
+                background-color: rgba(255, 255, 255, 0.9);
+                border-bottom: 1px solid #e5e7eb;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            [data-theme="light"] .navbar a {
+                color: #000000;
+            }
+
+            [data-theme="light"] .navbar a:hover {
+                color: #0288D1;
+            }
+
+            [data-theme="light"] .text-gray-100 {
+                color: #1a202c;
+            }
+
+            [data-theme="light"] .text-gray-300 {
+                color: #4a5568;
+            }
+
+            [data-theme="light"] .text-gray-400 {
+                color: #718096;
+            }
+
+            [data-theme="light"] .text-green-300 {
+                color: #117CCA;
+            }
+
+            [data-theme="light"] .text-green-400 {
+                color: #0264D4;
+            }
+
+            [data-theme="light"] .logo {
+                opacity: 0.9;
+            }
+
+            [data-theme="light"] footer {
+                background: #ffffff;
+                color: #000000;
+                border-top: 2px solid #d1d5db;
+                box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            [data-theme="light"] footer p {
+                color: #000000;
+            }
+
+            [data-theme="light"] .btn-green {
+                background: linear-gradient(90deg, #00b4d8, #48cae4);
+                color: white;
+                padding: 0.8rem 2.5rem;
+                border-radius: 9999px;
+                transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+                box-shadow: 0 4px 15px rgba(72, 202, 228, 0.5);
+            }
+
+            [data-theme="light"] .btn-green:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 20px rgba(72, 202, 228, 0.8);
+            }
+
+            [data-theme="light"] #contact-modal {
+                background-color: rgba(0, 0, 0, 0.8);
+            }
+
+            [data-theme="light"] #modal-content {
+                background: #f0f4f8;
+                border: 1px solid #ccc;
+            }
+
+            [data-theme="light"] #join-form {
+                background: #f0f4f8; 
+                border: 1px solid #ccc;
+            }
+
+            [data-theme="light"] #join-form input {
+                background: #ffffff;
+                border: 1px solid #ccc;
+                color: #000000;
+            }
+
+            [data-theme="light"] #join-form input::placeholder {
+                color: #718096;
+            }
+
+            [data-theme="light"] h1, [data-theme="light"] h2, [data-theme="light"] h3, [data-theme="light"] p {
+                color: #1a202c;
+            }
+
+            /* Toggle Switch Styles */
+            .toggle-switch {
+                position: relative;
+                display: inline-block;
+                width: 50px;
+                height: 24px;
+            }
+
+            .toggle-switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+            .slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #ccc;
+                transition: .4s;
+                border-radius: 24px;
+            }
+
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 16px;
+                width: 16px;
+                left: 4px;
+                bottom: 4px;
+                background-color: white;
+                transition: .4s;
+                border-radius: 50%;
+            }
+
+            input:checked + .slider {
+                background-color: #26C6DA;
+            }
+
+            input:checked + .slider:before {
+                transform: translateX(26px);
+            }
+
+        </style>
+</head>
+<body class="min-h-screen flex flex-col" data-theme="dark">
+    <!-- Navbar -->
+    <header class="p-6 fixed w-full z-50 top-0 transition-colors duration-500" id="navbar">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center">
+                <!-- ASHRAE Logo in Navbar -->
+                <img src="Branch Logo.png" alt="ASHRAE Logo" class="h-12 w-12 logo mr-4">
+                <h1 class="text-2xl font-extrabold tracking-wide">ASHRAE IEM Student Branch</h1>
+            </div>
+            <nav class="navbar flex gap-6 items-center">
+                <a href="index.html" class="hover:text-green-400">Home</a>
+                <a href="membership.html" class="hover:text-green-400">Membership</a>
+                <a href="meetings.html" class="hover:text-green-400">Meetings</a>
+                <a href="documents.html" class="hover:text-green-400">Documents</a>
+                <a href="functions.html" class="hover:text-green-400">Functions</a>
+                <a href="join.html" class="hover:text-green-400">Join Club</a>
+                <a href="team.html" class="hover:text-green-400">Team</a>
+                <a href="#" id="contact-us-link" class="hover:text-green-400">Contact Us</a>
+                <!-- Toggle Switch -->
+                <label class="toggle-switch ml-4">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider"></span>
+                </label>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Contact Us Modal -->
+    <div id="contact-modal" class="fixed inset-0 flex items-center justify-center hidden overflow-y-auto transition-colors duration-500">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-2xl relative max-w-4xl w-full text-center mt-16" id="modal-content">
+            <button id="close-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-200 text-2xl">&times;</button>
+            <h3 class="text-3xl font-bold text-green-400 mb-6">Contact Us</h3>
+            <!-- Faculty Advisor -->
+            <div class="flex flex-col items-center mb-6">
+                <img src="Dr. Gunjan Kumar.jpg" alt="Faculty Advisor" class="w-24 h-24 rounded-full border-2 border-green-400 mb-2">
+                <p class="text-gray-300 font-bold">Dr. Gunjan Kumar</p>
+                <p class="text-green-300">Faculty Advisor</p>
+                <p class="text-gray-300 text-sm">Email: <a href="mailto:gunjan.kumar@iem.edu.in" class="text-green-300 underline">gunjan.kumar@iem.edu.in</a></p>
+            </div>
+            <!-- Other Members -->
+            <div class="flex flex-wrap justify-center items-center gap-12">
+                <!-- President -->
+                <div class="flex flex-col items-center text-center">
+                    <img src="Subhajit Bag.jpg" alt="President" class="w-24 h-24 rounded-full border-2 border-green-400 mb-2">
+                    <p class="text-gray-300 font-bold">Subhajit Bag</p>
+                    <p class="text-green-300">President</p>
+                    <p class="text-gray-300 text-sm">Email: <a href="mailto:mailtosubhajitbag@gmail.com" class="text-green-300 underline">mailtosubhajitbag@gmail.com</a></p>
+                </div>
+                <!-- Vice President -->
+                <div class="flex flex-col items-center text-center">
+                    <img src="Ayan Guha Roy.jpg" alt="Vice President" class="w-24 h-24 rounded-full border-2 border-green-400 mb-2">
+                    <p class="text-gray-300 font-bold">Ayan Guha Roy</p>
+                    <p class="text-green-300">Vice President</p>
+                    <p class="text-gray-300 text-sm">Email: <a href="mailto:ayanguharoy99@gmail.com" class="text-green-300 underline">ayanguharoy99@gmail.com</a></p>
+                </div>
+                <!-- Secretary -->
+                <div class="flex flex-col items-center text-center">
+                    <img src="Diptangsu Panja.jpg" alt="Secretary" class="w-24 h-24 rounded-full border-2 border-green-400 mb-2">
+                    <p class="text-gray-300 font-bold">Diptangsu Panja</p>
+                    <p class="text-green-300">Secretary</p>
+                    <p class="text-gray-300 text-sm">Email: <a href="mailto:diptangsupanja03@gmail.com" class="text-green-300 underline">diptangsupanja03@gmail.com</a></p>
+                </div>
+            </div>
+            <!-- Social Media Links -->
+            <div class="mt-6 flex justify-center space-x-6">
+                <a href="mailto:ashraeiemsb@gmail.com" target="_blank">
+                    <img src="https://img.icons8.com/fluency/48/000000/new-post.png" alt="Email" class="h-16 w-16">
+                </a>
+                <a href="https://www.facebook.com/share/ADizXmEN2eXr2gGU/?mibextid=qi2Omg" target="_blank">
+                    <img src="https://img.icons8.com/fluency/48/000000/facebook-new.png" alt="Facebook" class="h-16 w-16">
+                </a>
+                <a href="https://www.instagram.com/ashrae_iem?igsh=ZHBtYmQxMHlzYnIx" target="_blank">
+                    <img src="https://img.icons8.com/fluency/48/000000/instagram-new.png" alt="Instagram" class="h-16 w-16">
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Main Content -->
+    <main class="pt-24 py-20 px-8 flex-grow transition-colors duration-500">
+        <!-- Functions and Responsibilities Section -->
+        <section class="content-container max-w-4xl mx-auto p-8 rounded-lg shadow-lg transition-colors duration-500">
+            <h3 class="text-3xl font-bold mb-6">Functions and Responsibilities</h3>
+            <p class="leading-relaxed text-lg mb-6">
+                The ASHRAE IEM Student Branch Technical Committee serves as the driving force behind critical initiatives that shape the future of HVAC&R technologies. Beyond routine tasks, our committee actively pushes the boundaries of what's possible, championing sustainability, innovation, and the well-being of building occupants. By integrating academic research, industry expertise, and collaborative insights, we transform concepts into standards, guidelines, and best practices that have real-world impact.
+            </p>
+            <p class="leading-relaxed text-lg">
+                Our efforts span from refining technical standards to mentoring upcoming engineers, ensuring that our work not only meets today's requirements but anticipates tomorrow's challenges. Through global conferences, publications, and outreach, we play a central role in uplifting the entire HVAC&R community, guiding it towards a greener, healthier, and more efficient built environment.
+            </p>
+        </section>
+
+        <!-- Introduction Section -->
+        <section class="content-container mt-12 max-w-4xl mx-auto p-8 rounded-lg shadow-lg transition-colors duration-500">
+            <h3 class="text-3xl font-bold mb-6">Introduction</h3>
+            <p class="leading-relaxed text-lg mb-6">
+                The ASHRAE IEM Student Branch Technical Committee (TC) is a dynamic collective of professionals, researchers, and students united by a common goal: advancing the arts and sciences of heating, ventilation, air conditioning, and refrigeration. We believe that the built environment is at the heart of human comfort and productivity, and as such, it should be designed, maintained, and improved with the utmost care.
+            </p>
+            <p class="leading-relaxed text-lg mb-6">
+                Our committee functions as a nexus of intellectual exchange, where ideas are scrutinized, tested, and refined before being woven into industry standards. This rigorous process ensures that the guidance we provide is both scientifically sound and practically applicable. Whether it’s fine-tuning performance benchmarks, enhancing energy efficiency measures, or elevating indoor air quality protocols, our work resonates across global markets, educational institutions, and professional practices.
+            </p>
+            <p class="leading-relaxed text-lg">
+                By engaging with a broad spectrum of stakeholders—building owners, architects, contractors, engineers, and end-users—we ensure that the standards and practices we endorse are inclusive, forward-looking, and attuned to the evolving complexities of modern buildings. In essence, we are catalysts for positive transformation, helping to mold a future where HVAC&R systems not only meet technological demands but also uphold the human and environmental values we hold dear.
+            </p>
+        </section>
+
+        <!-- Key Responsibilities Section -->
+        <section class="content-container mt-12 max-w-4xl mx-auto p-8 rounded-lg shadow-lg transition-colors duration-500">
+            <h3 class="text-3xl font-bold mb-6">Key Responsibilities</h3>
+            
+            <!-- Technical Standards Development -->
+            <div class="mb-8">
+                <h4 class="text-2xl font-semibold text-green-300 mb-2">1. Technical Standards Development</h4>
+                <p class="leading-relaxed text-lg mb-4">
+                    Our committee steers the creation and periodic revision of industry standards. These standards are far more than just documents; they represent a collective understanding of performance metrics, safety protocols, and sustainability goals. Each revision draws on cutting-edge research, field data, and cross-disciplinary expertise.
+                </p>
+                <p class="leading-relaxed text-lg">
+                    By setting forth clear benchmarks, we empower professionals to design HVAC&R systems that consistently deliver comfort, efficiency, and health. As these standards are adopted worldwide, their ripple effect ensures that even the most distant communities benefit from reliable, high-quality building services.
+                </p>
+            </div>
+            
+            <!-- Handbook Contributions -->
+            <div class="mb-8">
+                <h4 class="text-2xl font-semibold text-green-300 mb-2">2. Handbook Contributions</h4>
+                <p class="leading-relaxed text-lg mb-4">
+                    ASHRAE Handbooks are foundational texts that guide industry practitioners across every corner of the globe. Our committee members contribute to these handbooks by synthesizing current knowledge, technological advancements, and field experiences into cohesive chapters and sections.
+                </p>
+                <p class="leading-relaxed text-lg">
+                    This ensures that each handbook edition remains a trusted resource. Professionals—be they recent graduates or seasoned engineers—rely on these texts for practical solutions, troubleshooting methods, and strategic insights that span from equipment sizing to complex system integration.
+                </p>
+            </div>
+            
+            <!-- Research Initiatives -->
+            <div class="mb-8">
+                <h4 class="text-2xl font-semibold text-green-300 mb-2">3. Research Initiatives</h4>
+                <p class="leading-relaxed text-lg mb-4">
+                    Innovation thrives where curiosity meets methodical inquiry. Our committee actively engages in research that challenges the status quo, addressing energy efficiency bottlenecks, improving thermal comfort strategies, and exploring novel ways to ensure indoor air quality that supports human health.
+                </p>
+                <p class="leading-relaxed text-lg">
+                    Through collaborations with universities, research labs, and industry partners, we push the boundaries of what HVAC&R systems can achieve. The outcomes of these projects often inform new guidelines, shape product development, and lay the groundwork for the next generation of building technologies.
+                </p>
+            </div>
+            
+            <!-- Program Sessions -->
+            <div class="mb-8">
+                <h4 class="text-2xl font-semibold text-green-300 mb-2">4. Program Sessions</h4>
+                <p class="leading-relaxed text-lg mb-4">
+                    At ASHRAE’s Winter and Annual Conferences, we host technical sessions, workshops, and panel discussions that bring together thought leaders from across the spectrum of building sciences. These events are more than just presentations—they are interactive forums where fresh ideas are debated, successful case studies are dissected, and emerging technologies are scrutinized.
+                </p>
+                <p class="leading-relaxed text-lg">
+                    By fostering this exchange, we help practitioners stay ahead of the curve, ensuring that the HVAC&R community remains dynamic, informed, and ready to tackle tomorrow’s engineering challenges.
+                </p>
+            </div>
+            
+            <!-- Educational Outreach -->
+            <div class="mb-8">
+                <h4 class="text-2xl font-semibold text-green-300 mb-2">5. Educational Outreach</h4>
+                <p class="leading-relaxed text-lg mb-4">
+                    The pipeline of talent in HVAC&R depends on our ability to engage with and inspire students and young professionals. The committee works closely with student branches, offering mentorship, educational materials, and opportunities for hands-on learning.
+                </p>
+                <p class="leading-relaxed text-lg">
+                    By nurturing interest at the grassroots level, we cultivate a new generation of engineers who approach building systems design and maintenance with creativity, responsibility, and an unwavering commitment to sustainability.
+                </p>
+            </div>
+            
+            <!-- FAQs and MTGs -->
+            <div>
+                <h4 class="text-2xl font-semibold text-green-300 mb-2">6. FAQs and Multidisciplinary Task Groups (MTGs)</h4>
+                <p class="leading-relaxed text-lg mb-4">
+                    To streamline knowledge transfer, we develop Frequently Asked Questions (FAQs) that address common queries and clarify complex concepts. These FAQs serve as quick reference points, helping professionals resolve day-to-day challenges efficiently.
+                </p>
+                <p class="leading-relaxed text-lg">
+                    Additionally, by participating in Multidisciplinary Task Groups (MTGs), we tackle issues that transcend a single technical domain. Collaborating with experts from varied backgrounds, we formulate holistic solutions that consider every dimension of building performance—be it structural integrity, occupant health, or environmental impact.
+                </p>
+            </div>
+        </section>
+
+        <!-- Get Involved Section -->
+        <section class="content-container mt-12 max-w-4xl mx-auto p-8 rounded-lg shadow-lg text-center transition-colors duration-500">
+            <h3 class="text-3xl font-bold mb-6">Get Involved</h3>
+            <p class="text-lg leading-relaxed mb-6">
+                The strength of our committee lies in its diversity and the breadth of perspectives it encompasses. Whether you’re a student eager to learn, a seasoned engineer looking to share expertise, or a researcher pushing the envelope of building technology, there’s a place for you here.
+            </p>
+            <p class="text-lg leading-relaxed mb-6">
+                Engage with us through conferences, contribute to research projects, attend our educational events, or provide input during standards revisions. Together, we can ensure that the HVAC&R industry not only meets today’s demands but also anticipates and adapts to the evolving challenges of the future. Your insights, experiences, and curiosity can help shape the guidelines that countless professionals will rely on.
+            </p>
+            <p class="text-lg leading-relaxed mb-6">
+                For more details or to contribute to these activities, feel free to connect with us through the <a href="#" id="contact-us-link-2" class="text-green-300 underline">Contact Us</a> section. By joining forces, we can maintain a legacy of quality, sustainability, and human-centered design in the built environment.
+            </p>
+            <a href="join.html" class="btn-green">Join Our Committee</a>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-6 text-center text-gray-400 transition-colors duration-500">
+        <div class="container mx-auto">
+            <p class="text-green-300 text-lg">&copy; 2024 ASHRAE IEM Student Branch. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Modal and Theme Toggle -->
+    <script>
+        const contactUsLink = document.getElementById('contact-us-link');
+        const contactUsLink2 = document.getElementById('contact-us-link-2');
+        const contactModal = document.getElementById('contact-modal');
+        const closeModal = document.getElementById('close-modal');
+        const themeToggle = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+
+        // Function to open modal
+        function openModal(event) {
+            event.preventDefault();
+            contactModal.classList.remove('hidden');
+        }
+
+        // Event listeners to open modal
+        if (contactUsLink) {
+            contactUsLink.addEventListener('click', openModal);
+        }
+        if (contactUsLink2) {
+            contactUsLink2.addEventListener('click', openModal);
+        }
+
+        // Event listener to close modal
+        if (closeModal) {
+            closeModal.addEventListener('click', function() {
+                contactModal.classList.add('hidden');
+            });
+        }
+
+        // Close modal when clicking outside the modal content
+        window.addEventListener('click', function(event) {
+            if (event.target === contactModal) {
+                contactModal.classList.add('hidden');
+            }
+        });
+
+        // Theme Toggle Functionality
+        if (themeToggle) {
+            // Check local storage for theme preference
+            if (localStorage.getItem('theme') === 'light') {
+                htmlElement.setAttribute('data-theme', 'light');
+                themeToggle.checked = true;
+            }
+
+            themeToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    htmlElement.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    htmlElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

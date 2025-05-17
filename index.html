@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>ASHRAE Student Club</title>
+    <!-- Tailwind CSS with Dark Mode Support -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom Styles -->
+    <style>
+        body {
+            transition: background 0.5s, color 0.5s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Dark Theme Styles */
+        [data-theme="dark"] body {
+            background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+            color: #e8f5e9;
+        }
+
+        [data-theme="dark"] .hero-background {
+            background: #1b2838;
+        }
+
+        [data-theme="dark"] footer {
+            background: linear-gradient(90deg, #0f2027, #2c5364);
+            color: #e8f5e9;
+            border-top: none;
+            box-shadow: none;
+        }
+
+        [data-theme="dark"] #navbar {
+            background-color: rgba(31, 41, 55, 0.9);
+        }
+
+        [data-theme="dark"] .navbar a {
+            color: #e8f5e9;
+        }
+
+        [data-theme="dark"] .navbar a:hover {
+            color: #38ef7d;
+        }
+
+        [data-theme="dark"] .logo {
+            opacity: 0.7;
+        }
+
+        [data-theme="dark"] .btn-green {
+            background: linear-gradient(90deg, #11998e, #38ef7d);
+            color: white;
+            padding: 0.8rem 2.5rem;
+            border-radius: 9999px;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            box-shadow: 0 4px 15px rgba(56, 239, 125, 0.5);
+        }
+
+        [data-theme="dark"] .btn-green:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(56, 239, 125, 0.8);
+        }
+
+        [data-theme="dark"] #contact-modal {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        [data-theme="dark"] #modal-content {
+            background: #1b2838;
+            color: #e8f5e9;
+        }
+
+        [data-theme="dark"] #modal-content h3 {
+            color: #38ef7d;
+        }
+
+        [data-theme="dark"] #modal-content a {
+            color: #38ef7d;
+        }
+
+        [data-theme="dark"] #modal-content a:hover {
+            color: #26C6DA;
+        }
+
+        [data-theme="dark"] .doc-card {
+            background: rgba(0, 0, 0, 0.7);
+            border: none;
+            color: #e8f5e9;
+        }
+
+        [data-theme="dark"] .doc-card h4 {
+            color: #e8f5e9;
+        }
+
+        [data-theme="dark"] .doc-card p {
+            color: #b0c4de;
+        }
+
+        /* Light Theme Styles */
+        [data-theme="light"] body {
+            background: linear-gradient(to bottom, #caf0f8, #ade8f4, #90e0ef);
+            color: #1a202c;
+        }
+
+        [data-theme="light"] .hero-background {
+            background: linear-gradient(to bottom, #caf0f8, #ade8f4, #90e0ef);
+        }
+
+        [data-theme="light"] footer {
+            background: #ffffff;
+            color: #1a202c; /* Changed from #000000 to #1a202c for consistency */
+            border-top: 2px solid #d1d5db;
+            box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="light"] footer p {
+            color: #117CCA; /* Ensures it matches text-green-300 */
+        }
+
+        [data-theme="light"] #navbar {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="light"] .navbar a {
+            color: #1a202c;
+        }
+
+        [data-theme="light"] .navbar a:hover {
+            color: #0288D1;
+        }
+
+        [data-theme="light"] .btn-green {
+            background: linear-gradient(90deg, #00b4d8, #48cae4);
+            color: white;
+            padding: 0.8rem 2.5rem;
+            border-radius: 9999px;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            box-shadow: 0 4px 15px rgba(72, 202, 228, 0.5);
+        }
+
+        [data-theme="light"] .btn-green:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(72, 202, 228, 0.8);
+        }
+
+        [data-theme="light"] #contact-modal {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        [data-theme="light"] #modal-content {
+            background: #f0f4f8;
+            border: 1px solid #ccc;
+            color: #1a202c;
+        }
+
+        [data-theme="light"] #modal-content h3 {
+            color: #117CCA;
+        }
+
+        [data-theme="light"] #modal-content a {
+            color: #0264D4;
+            text-decoration: underline;
+        }
+
+        [data-theme="light"] #modal-content a:hover {
+            color: #0288D1;
+        }
+
+        [data-theme="light"] .doc-card {
+            background: #f0f4f8;
+            border: 1px solid #ccc;
+            color: #1a202c;
+        }
+
+        [data-theme="light"] .doc-card h4 {
+            color: #1a202c;
+        }
+
+        [data-theme="light"] .doc-card p {
+            color: #4a5568;
+        }
+
+        /* Navbar Link Hover */
+        .navbar a:hover {
+            color: #26C6DA;
+        }
+
+        /* Logo Opacity */
+        .logo {
+            opacity: 0.9;
+        }
+
+        /* Text Color Adjustments for Light Theme */
+        [data-theme="light"] h1,
+        [data-theme="light"] h2,
+        [data-theme="light"] h3,
+        [data-theme="light"] p {
+            color: #1a202c;
+        }
+
+        [data-theme="light"] .text-green-300 {
+            color: #194C9C;
+        }
+
+        [data-theme="light"] .text-green-400 {
+            color: #26C6DA;
+        }
+
+        [data-theme="light"] .bg-gray-900 {
+            background-color: #ffffff;
+        }
+
+        [data-theme="light"] .bg-gray-800 {
+            background-color: #f7fafc;
+        }
+
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #26C6DA;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <header class="p-6 shadow-lg fixed w-full z-50 top-0 transition-colors duration-500" id="navbar">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center">
+                <!-- ASHRAE Logo in Navbar -->
+                <img src="Branch Logo.png" alt="ASHRAE Logo" class="h-12 w-12 logo mr-4">
+                <h1 class="text-2xl font-extrabold tracking-wide">ASHRAE IEM Student Branch</h1>
+            </div>
+            <nav class="navbar flex gap-6 items-center">
+                <a href="index.html" class="hover:text-green-400">Home</a>
+                <a href="membership.html" class="hover:text-green-400">Membership</a>
+                <a href="meetings.html" class="hover:text-green-400">Meetings</a>
+                <a href="documents.html" class="hover:text-green-400">Documents</a>
+                <a href="functions.html" class="hover:text-green-400">Functions</a>
+                <a href="join.html" class="hover:text-green-400">Join Club</a>
+                <a href="team.html" class="hover:text-green-400">Team</a>
+                <a href="#" id="contact-us-link" class="hover:text-green-400">Contact Us</a>
+                <!-- Toggle Switch -->
+                <label class="toggle-switch ml-4">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider"></span>
+                </label>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Contact Us Modal -->
+    <div id="contact-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden overflow-y-auto">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-2xl relative max-w-4xl w-full text-center mt-16 transition-colors duration-500" id="modal-content">
+            <button id="close-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-200 text-2xl">&times;</button>
+            <h3 class="text-3xl font-bold text-green-400 mb-6">Contact Us</h3>
+            <!-- Faculty Advisor -->
+            <div class="flex flex-col items-center mb-6">
+                <img src="Dr. Gunjan Kumar.jpg" alt="Faculty Advisor" class="w-24 h-24 rounded-full border-2 border-green-400 mb-2">
+                <p class="text-gray-300 font-bold">Dr. Gunjan Kumar</p>
+                <p class="text-green-300">Faculty Advisor</p>
+                <p class="text-gray-300 text-sm">Email: <a href="mailto:gunjan.kumar@iem.edu.in" class="text-green-300 underline">gunjan.kumar@iem.edu.in</a></p>
+            </div>
+            <!-- Other Members -->
+            <div class="flex flex-wrap justify-center items-center gap-12">
+                <!-- President -->
+                <div class="flex flex-col items-center text-center">
+                    <img src="Subhajit Bag.jpg" alt="President" class="w-24 h-24 rounded-full border-2 border-green-400 mb-2">
+                    <p class="text-gray-300 font-bold">Subhajit Bag</p>
+                    <p class="text-green-300">President</p>
+                    <p class="text-gray-300 text-sm">Email: <a href="mailto:mailtosubhajitbag@gmail.com" class="text-green-300 underline">mailtosubhajitbag@gmail.com</a></p>
+                </div>
+                <!-- Vice President -->
+                <div class="flex flex-col items-center text-center">
+                    <img src="Ayan Guha Roy.jpg" alt="Vice President" class="w-24 h-24 rounded-full border-2 border-green-400 mb-2">
+                    <p class="text-gray-300 font-bold">Ayan Guha Roy</p>
+                    <p class="text-green-300">Vice President</p>
+                    <p class="text-gray-300 text-sm">Email: <a href="mailto:ayanguharoy99@gmail.com" class="text-green-300 underline">ayanguharoy99@gmail.com</a></p>
+                </div>
+                <!-- Secretary -->
+                <div class="flex flex-col items-center text-center">
+                    <img src="Diptangsu Panja.jpg" alt="Secretary" class="w-24 h-24 rounded-full border-2 border-green-400 mb-2">
+                    <p class="text-gray-300 font-bold">Diptangsu Panja</p>
+                    <p class="text-green-300">Secretary</p>
+                    <p class="text-gray-300 text-sm">Email: <a href="mailto:diptangsupanja03@gmail.com" class="text-green-300 underline">diptangsupanja03@gmail.com</a></p>
+                </div>
+            </div>
+            <!-- Social Media Links -->
+            <div class="mt-6 flex justify-center space-x-6">
+                <a href="mailto:ashraeiemsb@gmail.com" target="_blank">
+                    <img src="https://img.icons8.com/fluency/48/000000/new-post.png" alt="Email" class="h-16 w-16">
+                </a>
+                <a href="https://www.facebook.com/share/ADizXmEN2eXr2gGU/?mibextid=qi2Omg" target="_blank">
+                    <img src="https://img.icons8.com/fluency/48/000000/facebook-new.png" alt="Facebook" class="h-16 w-16">
+                </a>
+                <a href="https://www.instagram.com/ashrae_iem?igsh=ZHBtYmQxMHlzYnIx" target="_blank">
+                    <img src="https://img.icons8.com/fluency/48/000000/instagram-new.png" alt="Instagram" class="h-16 w-16">
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="hero" class="text-center py-48 hero-background transition-colors duration-500">
+        <h2 class="text-5xl font-extrabold mb-6">Welcome to ASHRAE IEM Student Branch</h2>
+        <p class="text-2xl mb-8">Empowering Students in HVAC and Sustainable Technology</p>
+        <!-- Student Branch Logo -->
+        <a href="join.html" class="btn-green">Join Club</a>
+        <div class="mt-12 flex justify-center">
+            <img src="Branch Logo.png" alt="Student Branch Logo" class="w-40 h-auto">
+        </div>
+    </section>
+
+    <!-- Mission and Vision Section -->
+    <section id="mission-vision" class="py-20 px-8 transition-colors duration-500">
+        <div class="max-w-7xl mx-auto text-center">
+            <h3 class="text-4xl font-bold mb-8">Our Mission and Vision</h3>
+            <p class="text-xl mb-6">
+                <span class="font-bold text-green-300">Mission:</span> To serve humanity by advancing the arts and sciences of heating, ventilation, air conditioning, refrigeration, and their allied fields.
+            </p>
+            <p class="text-xl">
+                <span class="font-bold text-green-300">Vision:</span> A healthy and sustainable built environment for all.
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-6 text-center text-gray-400 transition-colors duration-500">
+        <div class="container mx-auto">
+            <p class="text-green-300 text-lg">&copy; 2024 ASHRAE IEM Student Branch. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Modal and Theme Toggle -->
+    <script>
+        const contactUsLink = document.getElementById('contact-us-link');
+        const contactModal = document.getElementById('contact-modal');
+        const closeModal = document.getElementById('close-modal');
+
+        contactUsLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            contactModal.classList.remove('hidden');
+        });
+
+        closeModal.addEventListener('click', function() {
+            contactModal.classList.add('hidden');
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target === contactModal) {
+                contactModal.classList.add('hidden');
+            }
+        });
+
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+
+        // Check local storage for theme preference
+        if (localStorage.getItem('theme') === 'light') {
+            htmlElement.setAttribute('data-theme', 'light');
+            themeToggle.checked = true;
+        }
+
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                htmlElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                htmlElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+    </script>
+</body>
+</html>

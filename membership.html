@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>ASHRAE Membership Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            transition: background 0.5s, color 0.5s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Dark Theme Styles */
+        [data-theme="dark"] body {
+            background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+            color: #e8f5e9;
+        }
+
+        [data-theme="dark"] header {
+            background-color: rgba(31, 41, 55, 0.9);
+        }
+
+        [data-theme="dark"] .navbar a {
+            color: #e8f5e9;
+        }
+
+        [data-theme="dark"] .navbar a:hover {
+            color: #38ef7d;
+        }
+
+        [data-theme="dark"] .logo {
+            opacity: 0.7;
+        }
+
+        [data-theme="dark"] footer {
+            background: linear-gradient(90deg, #0f2027, #2c5364);
+            color: #e8f5e9;
+            border-top: none;
+            box-shadow: none;
+        }
+
+        [data-theme="dark"] footer p {
+            color: #38ef7d;
+        }
+
+        [data-theme="dark"] .btn-green {
+            background: linear-gradient(90deg, #11998e, #38ef7d);
+            color: white;
+            padding: 0.8rem 2.5rem;
+            border-radius: 9999px;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            box-shadow: 0 4px 15px rgba(56, 239, 125, 0.5);
+        }
+        [data-theme="dark"] .btn-green:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(56, 239, 125, 0.8);
+        }
+
+        [data-theme="dark"] #contact-modal {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        [data-theme="dark"] #modal-content {
+            background: #1b2838;
+            border: none;
+            color: #e8f5e9;
+        }
+
+        [data-theme="dark"] #modal-content h3 {
+            color: #38ef7d;
+        }
+
+        [data-theme="dark"] #modal-content a {
+            color: #38ef7d;
+        }
+
+        [data-theme="dark"] #modal-content a:hover {
+            color: #26C6DA;
+        }
+
+        /* Membership Container for Dark Mode */
+        [data-theme="dark"] .membership-container {
+            background: rgba(0,0,0,0.7);
+            border: none;
+            color: #e8f5e9;
+        }
+
+        /* Light Theme Styles */
+        [data-theme="light"] body {
+            background: linear-gradient(to bottom, #caf0f8, #ade8f4, #90e0ef);
+            color: #000000; 
+        }
+
+        [data-theme="light"] header {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="light"] .navbar a {
+            color: #000000;
+        }
+
+        [data-theme="light"] .navbar a:hover {
+            color: #0288D1;
+        }
+
+        [data-theme="light"] .logo {
+            opacity: 0.9;
+        }
+
+        [data-theme="light"] footer {
+            background: #ffffff;
+            color: #000000;
+            border-top: 2px solid #d1d5db;
+            box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="light"] footer p {
+            color: #000000;
+        }
+
+        [data-theme="light"] .btn-green {
+            background: linear-gradient(90deg, #00b4d8, #48cae4);
+            color: white;
+            padding: 0.8rem 2.5rem;
+            border-radius: 9999px;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            box-shadow: 0 4px 15px rgba(72, 202, 228, 0.5);
+        }
+        [data-theme="light"] .btn-green:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(72, 202, 228, 0.8);
+        }
+
+        [data-theme="light"] #contact-modal {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        [data-theme="light"] #contact-modal > div {
+            background: #f0f4f8;
+            border: 1px solid #ccc;
+        }
+
+        /* Override text colors in light mode */
+        [data-theme="light"] h1,
+        [data-theme="light"] h2,
+        [data-theme="light"] h3,
+        [data-theme="light"] h4,
+        [data-theme="light"] h5,
+        [data-theme="light"] h6,
+        [data-theme="light"] p,
+        [data-theme="light"] label {
+            color: #000000 !important;
+        }
+
+        [data-theme="light"] .text-gray-100,
+        [data-theme="light"] .text-gray-300,
+        [data-theme="light"] .text-gray-400 {
+            color: #000000 !important;
+        }
+
+        [data-theme="light"] .text-green-300 {
+            color: #194C9C !important;
+        }
+
+        [data-theme="light"] .text-green-400 {
+            color: #26C6DA !important;
+        }
+
+        [data-theme="light"] input,
+        [data-theme="light"] select,
+        [data-theme="light"] textarea {
+            background: #ffffff !important;
+            border: 1px solid #ccc !important;
+            color: #000000 !important;
+        }
+
+        /* Membership Container for Light Mode */
+        [data-theme="light"] .membership-container {
+            background: #f0f4f8 !important;
+            border: 1px solid #ccc !important;
+            color: #000000 !important;
+        }
+
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            vertical-align: middle;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px; width: 16px;
+            left: 4px; bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #26C6DA;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+    </style>
+</head>
+<body class="min-h-screen flex flex-col" data-theme="dark">
+    <!-- Navbar -->
+    <header class="p-6 bg-gray-900 bg-opacity-90 shadow-lg fixed w-full z-50 top-0 transition-colors duration-500">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="Branch Logo.png" alt="ASHRAE Logo" class="h-12 w-12 logo mr-4">
+                <h1 class="text-2xl font-extrabold tracking-wide">ASHRAE IEM Student Branch</h1>
+            </div>
+            <nav class="navbar flex gap-6 text-gray-300 items-center">
+                <a href="index.html" class="hover:text-green-400">Home</a>
+                <a href="membership.html" class="hover:text-green-400">Membership</a>
+                <a href="meetings.html" class="hover:text-green-400">Meetings</a>
+                <a href="documents.html" class="hover:text-green-400">Documents</a>
+                <a href="functions.html" class="hover:text-green-400">Functions</a>
+                <a href="join.html" class="hover:text-green-400">Join Club</a>
+                <a href="team.html" class="hover:text-green-400">Team</a>
+                <a href="#" id="contact-us-link" class="hover:text-green-400">Contact Us</a>
+                <!-- Optional Theme Toggle -->
+                <label class="toggle-switch ml-4">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider"></span>
+                </label>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Contact Us Modal -->
+    <div id="contact-modal" class="fixed inset-0 flex items-center justify-center hidden overflow-y-auto transition-colors duration-500">
+        <div id="modal-content" class="bg-gray-800 p-8 rounded-lg shadow-2xl relative max-w-4xl w-full text-center mt-16">
+            <button id="close-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-200 text-2xl">&times;</button>
+            <h3 class="text-3xl font-bold text-green-300 mb-6">Contact Us</h3>
+            <!-- Faculty Advisor -->
+            <div class="flex flex-col items-center mb-6">
+                <img src="Dr. Gunjan Kumar.jpg" alt="Faculty Advisor" class="w-24 h-24 rounded-full border-2 border-green-400 mb-2">
+                <p class="text-gray-300 font-bold">Dr. Gunjan Kumar</p>
+                <p class="text-green-300">Faculty Advisor</p>
+                <p class="text-gray-300 text-sm">Email: <a href="mailto:gunjan.kumar@iem.edu.in" class="text-green-300 underline">gunjan.kumar@iem.edu.in</a></p>
+            </div>
+            <!-- Other Members -->
+            <div class="flex flex-wrap justify-center items-center gap-12">
+                <!-- President -->
+                <div class="flex flex-col items-center text-center">
+                    <img src="Subhajit Bag.jpg" alt="President" class="w-24 h-24 rounded-full border-2 border-green-400 mb-2">
+                    <p class="text-gray-300 font-bold">Subhajit Bag</p>
+                    <p class="text-green-300">President</p>
+                    <p class="text-gray-300 text-sm">Email: <a href="mailto:mailtosubhajitbag@gmail.com" class="text-green-300 underline">mailtosubhajitbag@gmail.com</a></p>
+                </div>
+                <!-- Vice President -->
+                <div class="flex flex-col items-center text-center">
+                    <img src="Ayan Guha Roy.jpg" alt="Vice President" class="w-24 h-24 rounded-full border-2 border-green-400 mb-2">
+                    <p class="text-gray-300 font-bold">Ayan Guha Roy</p>
+                    <p class="text-green-300">Vice President</p>
+                    <p class="text-gray-300 text-sm">Email: <a href="mailto:ayanguharoy99@gmail.com" class="text-green-300 underline">ayanguharoy99@gmail.com</a></p>
+                </div>
+                <!-- Secretary -->
+                <div class="flex flex-col items-center text-center">
+                    <img src="Diptangsu Panja.jpg" alt="Secretary" class="w-24 h-24 rounded-full border-2 border-green-400 mb-2">
+                    <p class="text-gray-300 font-bold">Diptangsu Panja</p>
+                    <p class="text-green-300">Secretary</p>
+                    <p class="text-gray-300 text-sm">Email: <a href="mailto:diptangsupanja03@gmail.com" class="text-green-300 underline">diptangsupanja03@gmail.com</a></p>
+                </div>
+            </div>
+            <!-- Social Media Links -->
+            <div class="mt-6 flex justify-center space-x-6">
+                <a href="mailto:ashraeiemsb@gmail.com" target="_blank">
+                    <img src="https://img.icons8.com/fluency/48/000000/new-post.png" alt="Email" class="h-16 w-16">
+                </a>
+                <a href="https://www.facebook.com/share/ADizXmEN2eXr2gGU/?mibextid=qi2Omg" target="_blank">
+                    <img src="https://img.icons8.com/fluency/48/000000/facebook-new.png" alt="Facebook" class="h-16 w-16">
+                </a>
+                <a href="https://www.instagram.com/ashrae_iem?igsh=ZHBtYmQxMHlzYnIx" target="_blank">
+                    <img src="https://img.icons8.com/fluency/48/000000/instagram-new.png" alt="Instagram" class="h-16 w-16">
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Membership Form -->
+    <main class="pt-24 py-10 px-8 flex-grow transition-colors duration-500">
+        <!-- Added membership-container class -->
+        <div class="membership-container max-w-4xl mx-auto p-8 rounded-lg shadow-xl">
+            <h2 class="text-4xl font-bold text-center mb-8 text-gray-100">Membership Application</h2>
+            <form id="membership-form" class="space-y-8">
+                <!-- Personal Information -->
+                <div class="space-y-4">
+                    <h3 class="text-2xl font-semibold text-green-300">Personal Information</h3>
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block mb-2">Email Address *</label>
+                        <input type="email" id="email" name="email" class="w-full p-3 rounded border focus:ring-2 focus:ring-green-400" placeholder="Your Email" required>
+                    </div>
+                    <!-- Country -->
+                    <div>
+                        <label for="country" class="block mb-2">Country *</label>
+                        <input type="text" id="country" name="country" class="w-full p-3 rounded border focus:ring-2 focus:ring-green-400" placeholder="Your Country" required>
+                    </div>
+                    <!-- Name -->
+                    <div>
+                        <label class="block mb-2">Name *</label>
+                        <div class="flex flex-wrap -mx-2">
+                            <div class="w-full md:w-1/3 px-2 mb-4 md:mb-0">
+                                <input type="text" id="first-name" name="first_name" class="w-full p-3 rounded border focus:ring-2 focus:ring-green-400" placeholder="First Name" required>
+                            </div>
+                            <div class="w-full md:w-1/3 px-2 mb-4 md:mb-0">
+                                <input type="text" id="middle-name" name="middle_name" class="w-full p-3 rounded border focus:ring-2 focus:ring-green-400" placeholder="Middle Name">
+                            </div>
+                            <div class="w-full md:w-1/3 px-2">
+                                <input type="text" id="last-name" name="last_name" class="w-full p-3 rounded border focus:ring-2 focus:ring-green-400" placeholder="Last Name" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Military Veteran -->
+                    <div>
+                        <label class="block mb-2">Military Service</label>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="military-veteran" name="military_veteran" class="mr-2">
+                            <label for="military-veteran">I am a military veteran who has been honorably discharged within the last 5 years</label>
+                        </div>
+                    </div>
+
+                    <!-- Birthday -->
+                    <div>
+                        <label class="block mb-2">Birthday *</label>
+                        <div class="flex flex-wrap -mx-2">
+                            <div class="w-full md:w-1/3 px-2 mb-4 md:mb-0">
+                                <input type="number" id="birth-month" name="birth_month" class="w-full p-3 rounded border focus:ring-2 focus:ring-green-400" placeholder="Month" required min="1" max="12">
+                            </div>
+                            <div class="w-full md:w-1/3 px-2 mb-4 md:mb-0">
+                                <input type="number" id="birth-day" name="birth_day" class="w-full p-3 rounded border focus:ring-2 focus:ring-green-400" placeholder="Day" required min="1" max="31">
+                            </div>
+                            <div class="w-full md:w-1/3 px-2">
+                                <input type="number" id="birth-year" name="birth_year" class="w-full p-3 rounded border focus:ring-2 focus:ring-green-400" placeholder="Year" required min="1900" max="2100">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="space-y-4">
+                    <h3 class="text-2xl font-semibold text-green-300">Contact Information</h3>
+                    <!-- Company -->
+                    <div>
+                        <label for="company" class="block mb-2">Company/Organization</label>
+                        <input type="text" id="company" name="company" class="w-full p-3 rounded border focus:ring-2 focus:ring-green-400" placeholder="Your Company/Organization">
+                    </div>
+
+                    <!-- Address Type -->
+                    <div>
+                        <label class="block mb-2">Address Type *</label>
+                        <div class="flex items-center">
+                            <input type="radio" id="business-address" name="address_type" value="Business" class="mr-2" required>
+                            <label for="business-address" class="mr-4">Business</label>
+                            <input type="radio" id="home-address" name="address_type" value="Home" class="mr-2">
+                            <label for="home-address">Home</label>
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div>
+                        <label class="block mb-2">Address *</label>
+                        <input type="text" id="address1" name="address1" class="w-full p-3 rounded border focus:ring-2 focus:ring-green-400" placeholder="Address Line 1" required>
+                        <input type="text" id="address2" name="address2" class="w-full mt-4 p-3 rounded border focus:ring-2 focus:ring-green-400" placeholder="Address Line 2">
+                    </div>
+
+                    <!-- City, State, Zip -->
+                    <div class="flex flex-wrap -mx-2">
+                        <div class="w-full md:w-1/3 px-2 mb-4 md:mb-0">
+                            <label for="city" class="block mb-2">City *</label>
+                            <input type="text" id="city" name="city" class="w-full p-3 rounded border focus:ring-2 focus:ring-green-400" placeholder="City" required>
+                        </div>
+                        <div class="w-full md:w-1/3 px-2 mb-4 md:mb-0">
+                            <label for="state" class="block mb-2">State</label>
+                            <input type="text" id="state" name="state" class="w-full p-3 rounded border focus:ring-2 focus:ring-green-400" placeholder="State">
+                        </div>
+                        <div class="w-full md:w-1/3 px-2">
+                            <label for="zip" class="block mb-2">Zip/Postal Code *</label>
+                            <input type="text" id="zip" name="zip" class="w-full p-3 rounded border focus:ring-2 focus:ring-green-400" placeholder="Zip/Postal Code" required>
+                        </div>
+                    </div>
+
+                    <!-- Phone -->
+                    <div>
+                        <label for="phone" class="block mb-2">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" class="w-full p-3 rounded border focus:ring-2 focus:ring-green-400" placeholder="Your Phone Number">
+                    </div>
+                </div>
+
+                <!-- Demographic Information -->
+                <div class="space-y-4">
+                    <h3 class="text-2xl font-semibold text-green-300">Demographic Information</h3>
+                    <!-- Title -->
+                    <div>
+                        <label for="title" class="block mb-2">Which best describes your title? *</label>
+                        <select id="title" name="title" class="w-full p-3 rounded border focus:ring-2 focus:ring-green-400" required>
+                            <option value="">Select your title</option>
+                            <option value="B - PRESIDENT">B - PRESIDENT</option>
+                            <option value="C - PARTNER">C - PARTNER</option>
+                            <option value="D - ASSOCIATE">D - ASSOCIATE</option>
+                            <option value="E - OWNER">E - OWNER</option>
+                            <option value="F - VICE PRESIDENT">F - VICE PRESIDENT</option>
+                            <option value="G - VICE PRESIDENT ENGINEERING, CHIEF ENG">G - VICE PRESIDENT ENGINEERING, CHIEF ENG</option>
+                            <option value="K - DESIGN ENGINEER, DESIGNER">K - DESIGN ENGINEER, DESIGNER</option>
+                            <option value="O - FACILITY ENGINEER/MANAGER">O - FACILITY ENGINEER/MANAGER</option>
+                            <option value="P - RESEARCH/DEVELOPMENT ENGINEER">P - RESEARCH/DEVELOPMENT ENGINEER</option>
+                            <option value="S - PURCHASING AGENT">S - PURCHASING AGENT</option>
+                            <option value="X - PROFESSOR/INSTRUCTOR">X - PROFESSOR/INSTRUCTOR</option>
+                            <option value="Y - STUDENT OR OTHER">Y - STUDENT OR OTHER</option>
+                            <option value="Z - COMPANY LIBRARIAN">Z - COMPANY LIBRARIAN</option>
+                            <option value="ZZ - OTHER">ZZ - OTHER</option>
+                        </select>
+                    </div>
+                    <!-- Firm -->
+                    <div>
+                        <label for="firm" class="block mb-2">Which best describes your firm? *</label>
+                        <select id="firm" name="firm" class="w-full p-3 rounded border focus:ring-2 focus:ring-green-400" required>
+                            <option value="">Select your firm</option>
+                            <option value="86 - STUDENT">86 - STUDENT</option>
+                        </select>
+                    </div>
+                    <!-- Function -->
+                    <div>
+                        <label for="function" class="block mb-2">Which best describes your function? *</label>
+                        <select id="function" name="function" class="w-full p-3 rounded border focus:ring-2 focus:ring-green-400" required>
+                            <option value="">Select your function</option>
+                            <option value="1 - DESIGN/APPLICATION">1 - DESIGN/APPLICATION</option>
+                            <option value="2 - MANUFACTURING">2 - MANUFACTURING</option>
+                            <option value="3 - MAINTENANCE/OPERATIONS">3 - MAINTENANCE/OPERATIONS</option>
+                            <option value="4 - MANAGEMENT">4 - MANAGEMENT</option>
+                            <option value="5 - SALES">5 - SALES</option>
+                            <option value="6 - RESEARCH">6 - RESEARCH</option>
+                            <option value="7 - TEACHING">7 - TEACHING</option>
+                            <option value="9 - OTHER">9 - OTHER</option>
+                        </select>
+                    </div>
+                    <!-- Area of Interest -->
+                    <div>
+                        <label for="interest" class="block mb-2">Choose your broad area of interest *</label>
+                        <input type="text" id="interest" name="interest" class="w-full p-3 rounded border focus:ring-2 focus:ring-green-400" placeholder="Area of Interest" required>
+                    </div>
+                </div>
+
+                <!-- Payment Instructions -->
+                <div class="space-y-4">
+                    <h3 class="text-2xl font-semibold text-green-300">Payment Instructions</h3>
+                    <p class="text-lg">Please transfer an amount of <span class="font-bold text-green-400">30 USD (approx. ₹2,490 INR)</span> to the following bank account:</p>
+                    <ul class="list-disc list-inside text-lg">
+                        <li><span class="font-bold">Bank Name:</span> ABC Bank</li>
+                        <li><span class="font-bold">Account Name:</span> ASHRAE IEM Student Branch</li>
+                        <li><span class="font-bold">Account Number:</span> 1234567890</li>
+                        <li><span class="font-bold">IFSC Code:</span> ABCD0123456</li>
+                        <li><span class="font-bold">Branch:</span> XYZ Branch</li>
+                    </ul>
+                    <p class="text-lg mt-4">Alternatively, you can scan the QR code below to make the payment:</p>
+                    <div class="flex justify-center mt-6">
+                        <img src="path_to_qr_code_image.jpg" alt="QR Code" class="w-48 h-48">
+                    </div>
+                    <p class="text-sm text-gray-400 mt-2">*Please include your full name in the payment reference.</p>
+                </div>
+
+                <!-- Promotional Code -->
+                <div>
+                    <label for="promo-code" class="block mb-2">Promotional Code or Referring Member’s Email Address</label>
+                    <input type="text" id="promo-code" name="promo_code" class="w-full p-3 rounded border focus:ring-2 focus:ring-green-400" placeholder="Enter Code or Email">
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" class="btn-green">Submit Application</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-6 text-center text-gray-400">
+        <div class="container mx-auto">
+            <p class="text-green-300 text-lg">&copy; 2024 ASHRAE IEM Student Branch. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Modal and Theme Toggle -->
+    <script>
+        const contactUsLink = document.getElementById('contact-us-link');
+        const contactModal = document.getElementById('contact-modal');
+        const closeModal = document.getElementById('close-modal');
+        const themeToggle = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+
+        contactUsLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            contactModal.classList.remove('hidden');
+        });
+
+        if (closeModal) {
+            closeModal.addEventListener('click', function() {
+                contactModal.classList.add('hidden');
+            });
+        }
+
+        window.addEventListener('click', function(event) {
+            if (event.target === contactModal) {
+                contactModal.classList.add('hidden');
+            }
+        });
+
+        // Check local storage for theme preference
+        if (localStorage.getItem('theme') === 'light') {
+            htmlElement.setAttribute('data-theme', 'light');
+            if (themeToggle) themeToggle.checked = true;
+        }
+
+        if (themeToggle) {
+            themeToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    htmlElement.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    htmlElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const membershipForm = document.getElementById('membership-form');
+            if (membershipForm) {
+                membershipForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+
+                    // Collect form data
+                    const formData = {
+                        email: document.getElementById('email').value,
+                        country: document.getElementById('country').value,
+                        first_name: document.getElementById('first-name').value,
+                        middle_name: document.getElementById('middle-name').value || '',
+                        last_name: document.getElementById('last-name').value,
+                        military_veteran: document.getElementById('military-veteran').checked ? 'Yes' : 'No',
+                        birth_month: document.getElementById('birth-month').value,
+                        birth_day: document.getElementById('birth-day').value,
+                        birth_year: document.getElementById('birth-year').value,
+                        company: document.getElementById('company').value || '',
+                        address_type: document.querySelector('input[name="address_type"]:checked').value,
+                        address1: document.getElementById('address1').value,
+                        address2: document.getElementById('address2').value || '',
+                        city: document.getElementById('city').value,
+                        state: document.getElementById('state').value || '',
+                        zip: document.getElementById('zip').value,
+                        phone: document.getElementById('phone').value || '',
+                        title: document.getElementById('title').value,
+                        firm: document.getElementById('firm').value,
+                        function: document.getElementById('function').value,
+                        interest: document.getElementById('interest').value,
+                        promo_code: document.getElementById('promo-code').value || '',
+                    };
+
+                    // Send data to your Node.js backend endpoint
+                    fetch('http://localhost:3000/membership', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData),
+                    })
+                    .then((response) => {
+                        if (response.ok) {
+                            alert('Your application has been submitted successfully.');
+                            membershipForm.reset();
+                        } else {
+                            alert('There was an error submitting your application. Please try again later.');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        alert('There was an error submitting your application. Please try again later.');
+                    });
+                });
+            }
+        });
+    </script>
+    <script src="server.js"></script>
+</body>
+</html>
