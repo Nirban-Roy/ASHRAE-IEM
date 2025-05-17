@@ -226,7 +226,10 @@
         input:checked + .slider:before {
             transform: translateX(26px);
         }
-
+[data-theme="dark"] select option[value=""] {
+    color: #94a3b8 !important; /* light gray hint text */
+    font-style: italic;
+}
     </style>
 </head>
 <body class="min-h-screen flex flex-col" data-theme="dark">
@@ -586,28 +589,30 @@
 
                     // Send data to your Node.js backend endpoint
                     fetch('http://localhost:3000/membership', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(formData),
-                    })
-                    .then((response) => {
-                        if (response.ok) {
-                            alert('Your application has been submitted successfully.');
-                            membershipForm.reset();
-                        } else {
-                            alert('There was an error submitting your application. Please try again later.');
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                        alert('There was an error submitting your application. Please try again later.');
-                    });
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(formData),
+})
+.then(response => 
+    response.json().then(data => {
+        if (response.ok) {
+            alert('Your application has been submitted successfully.');
+            membershipForm.reset();
+        } else {
+            alert(data.error || 'There was an error submitting your application. Please try again later.');
+        }
+    })
+)
+.catch((error) => {
+    console.error('Error:', error);
+    alert('There was an error submitting your application. Please try again later.');
+});
+
                 });
             }
         });
     </script>
-    <script src="server.js"></script>
 </body>
 </html>
