@@ -59,8 +59,9 @@ db.serialize(() => {
       firm              TEXT,
       \`function\`       TEXT,
       interest          TEXT,
-      promo_code        TEXT
-    )
+      promo_code TEXT,
+      date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
   `);
 
   db.run(`
@@ -202,7 +203,7 @@ app.post("/membership", (req, res) => {
         company, address_type, address1, address2, city,
         state, zip, phone, title, firm, \`function\`,
         interest, promo_code
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
     `);
 
     stmt.run(
@@ -287,6 +288,29 @@ app.delete("/api/members/:id", (req, res) => {
     }
     res.json({ message: "Member deleted.", changes: this.changes });
   });
+});
+// Get setting by key
+app.get("/api/settings/:key", (req, res) => {
+  const key = req.params.key;
+  db.get("SELECT value FROM settings WHERE key = ?", [key], (err, row) => {
+    if (err) return res.status(500).json({ error: "DB error" });
+    if (!row) return res.status(404).json({ error: "Setting not found" });
+    res.json({ value: row.value });
+  });
+});
+
+// Update setting by key
+app.put("/api/settings/:key", (req, res) => {
+  const key = req.params.key;
+  const value = req.body.value;
+  db.run(
+    "UPDATE settings SET value = ? WHERE key = ?",
+    [value, key],
+    function(err) {
+      if (err) return res.status(500).json({ error: "Update failed" });
+      res.json({ message: "Setting updated", changes: this.changes });
+    }
+  );
 });
 
 // 4. START SERVER
