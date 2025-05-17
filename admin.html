@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <title>ASHRAE Admin Console</title>
-  <!-- Tailwind + FontAwesome -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-  <style>
+    <meta charset="UTF-8">
+    <title>ASHRAE Admin Console</title>
+    <!-- Tailwind CSS with Dark Mode Support -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Styles -->
+    <style>
         body {
             transition: background 0.5s, color 0.5s;
             font-family: 'Poppins', sans-serif;
@@ -555,362 +556,906 @@
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
-
-  <!-- Navbar -->
-  <header id="navbar" class="p-6 fixed w-full z-50 top-0 shadow-lg bg-opacity-90 backdrop-blur">
-    <div class="container mx-auto flex justify-between items-center">
-      <div class="flex items-center">
-        <img src="Branch Logo.png" alt="Logo" class="h-12 w-12 logo mr-4">
-        <h1 class="text-2xl font-extrabold">ASHRAE Admin Console</h1>
-      </div>
-      <div class="flex items-center gap-4">
-        <a href="/" class="hover:text-green-400">Back to Site</a>
-        <label class="toggle-switch">
-          <input type="checkbox" id="theme-toggle">
-          <span class="slider"></span>
-        </label>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main -->
-  <main class="flex-grow pt-24 pb-12 px-6 container mx-auto">
-    <div class="bg-gray-800 bg-opacity-50 rounded-lg shadow-xl p-6 transition-colors">
-      <!-- Tabs -->
-      <div class="flex border-b border-gray-700 mb-6">
-        <button class="tab-button active" data-tab="join-requests">Join Requests</button>
-        <button class="tab-button" data-tab="memberships">Memberships</button>
-      </div>
-
-      <!-- Search & Export -->
-      <div class="flex flex-col md:flex-row gap-4 mb-6">
-        <input id="global-search" type="text" placeholder="Search…" class="filter-input flex-grow"/>
-        <button id="export-btn" class="btn btn-secondary">
-          <i class="fas fa-download mr-2"></i>Export CSV
-        </button>
-      </div>
-
-      <!-- Join Requests Table -->
-      <div id="join-requests-content" class="tab-content active">
-        <div class="table-container overflow-x-auto">
-          <table class="min-w-full">
-            <thead>
-              <tr>
-                <th data-column="id">ID <i class="fas fa-sort sort-icon"></i></th>
-                <th data-column="name">Name <i class="fas fa-sort sort-icon"></i></th>
-                <th data-column="email">Email <i class="fas fa-sort sort-icon"></i></th>
-                <th data-column="phone">Phone <i class="fas fa-sort sort-icon"></i></th>
-                <th data-column="date_submitted">Date <i class="fas fa-sort sort-icon"></i></th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="join-requests-body"></tbody>
-          </table>
+    <!-- Navbar -->
+    <header class="p-6 shadow-lg fixed w-full z-50 top-0 transition-colors duration-500" id="navbar">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center">
+                <!-- ASHRAE Logo in Navbar -->
+                <img src="Branch Logo.png" alt="ASHRAE Logo" class="h-12 w-12 logo mr-4">
+                <h1 class="text-2xl font-extrabold tracking-wide">ASHRAE IEM Admin Console</h1>
+            </div>
+            <nav class="navbar flex gap-6 items-center">
+                <a href="index.html" class="hover:text-green-400">Back to Site</a>
+                <!-- Toggle Switch -->
+                <label class="toggle-switch ml-4">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider"></span>
+                </label>
+            </nav>
         </div>
-        <div id="join-requests-pagination" class="pagination mt-4"></div>
-      </div>
+    </header>
 
-      <!-- Memberships Table -->
-      <div id="memberships-content" class="tab-content hidden">
-        <div class="table-container overflow-x-auto">
-          <table class="min-w-full">
-            <thead>
-              <tr>
-                <th data-column="id">ID <i class="fas fa-sort sort-icon"></i></th>
-                <th data-column="first_name">First Name <i class="fas fa-sort sort-icon"></i></th>
-                <th data-column="last_name">Last Name <i class="fas fa-sort sort-icon"></i></th>
-                <th data-column="email">Email <i class="fas fa-sort sort-icon"></i></th>
-                <th data-column="phone">Phone <i class="fas fa-sort sort-icon"></i></th>
-                <th data-column="city">City <i class="fas fa-sort sort-icon"></i></th>
-                <th data-column="country">Country <i class="fas fa-sort sort-icon"></i></th>
-                <th data-column="military_veteran">Veteran <i class="fas fa-sort sort-icon"></i></th>
-                <th data-column="date">Date <i class="fas fa-sort sort-icon"></i></th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="memberships-body"></tbody>
-          </table>
+    <!-- Main Content -->
+    <main class="flex-grow pt-24 pb-12 px-6 container mx-auto">
+        <div class="bg-gray-800 bg-opacity-50 rounded-lg shadow-xl p-6 transition-colors duration-500">
+            <!-- Tabs Navigation -->
+            <div class="flex border-b border-gray-700 mb-6">
+                <button id="join-requests-tab" class="tab-button active" data-tab="join-requests">
+                    Join Requests
+                </button>
+                <button id="memberships-tab" class="tab-button" data-tab="memberships">
+                    Membership Submissions
+                </button>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="mb-6 flex flex-col md:flex-row gap-4">
+                <div class="flex-grow">
+                    <input type="text" id="global-search" class="filter-input w-full" placeholder="Search...">
+                </div>
+                <div class="flex gap-2">
+                    <button id="export-btn" class="btn btn-secondary">
+                        <i class="fas fa-download mr-2"></i>Export
+                    </button>
+                </div>
+            </div>
+
+            <!-- Join Requests Table -->
+            <div id="join-requests-content" class="tab-content active">
+                <div class="table-container">
+                    <table id="join-requests-table">
+                        <thead>
+                            <tr>
+                                <th data-column="id">ID <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="name">Name <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="email">Email <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="phone">Phone <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="date_submitted">Date Submitted <i class="fas fa-sort sort-icon"></i></th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="join-requests-body">
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination mt-4" id="join-requests-pagination">
+                    <!-- Pagination will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Memberships Table -->
+            <div id="memberships-content" class="tab-content hidden">
+                <div class="table-container">
+                    <table id="memberships-table">
+                        <thead>
+                            <tr>
+                                <th data-column="id">ID <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="first_name">First Name <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="last_name">Last Name <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="email">Email <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="phone">Phone <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="city">City <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="country">Country <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="military_veteran">Veteran <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="date">Date <i class="fas fa-sort sort-icon"></i></th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="memberships-body">
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination mt-4" id="memberships-pagination">
+                    <!-- Pagination will be loaded here -->
+                </div>
+            </div>
         </div>
-        <div id="memberships-pagination" class="pagination mt-4"></div>
-      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-6 text-center text-gray-400 transition-colors duration-500">
+        <div class="container mx-auto">
+            <p class="text-green-300 text-lg">&copy; 2024 ASHRAE IEM Student Branch. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- View Details Modal -->
+    <div id="details-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Record Details</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body" id="details-modal-body">
+                <!-- Details will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary close-modal">Close</button>
+            </div>
+        </div>
     </div>
-  </main>
 
-  <!-- Modals & Helpers -->
-  <!-- Details Modal -->
-  <div id="details-modal" class="modal"><div class="modal-content">
-    <div class="modal-header">
-      <h3 class="modal-title">Record Details</h3>
-      <span class="close-modal">&times;</span>
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Record</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body" id="edit-modal-body">
+                <!-- Form will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary close-modal">Cancel</button>
+                <button id="save-changes-btn" class="btn btn-primary">Save Changes</button>
+            </div>
+        </div>
     </div>
-    <div class="modal-body" id="details-modal-body"></div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary close-modal">Close</button>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Deletion</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this record? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary close-modal">Cancel</button>
+                <button id="confirm-delete-btn" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
     </div>
-  </div></div>
 
-  <!-- Edit Modal -->
-  <div id="edit-modal" class="modal"><div class="modal-content">
-    <div class="modal-header">
-      <h3 class="modal-title">Edit Record</h3>
-      <span class="close-modal">&times;</span>
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="loading-spinner"></div>
     </div>
-    <div class="modal-body" id="edit-modal-body"></div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary close-modal">Cancel</button>
-      <button id="save-changes-btn" class="btn btn-primary">Save Changes</button>
-    </div>
-  </div></div>
 
-  <!-- Delete Modal -->
-  <div id="delete-modal" class="modal"><div class="modal-content">
-    <div class="modal-header">
-      <h3 class="modal-title">Confirm Deletion</h3>
-      <span class="close-modal">&times;</span>
-    </div>
-    <div class="modal-body">
-      <p>Are you sure? This cannot be undone.</p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary close-modal">Cancel</button>
-      <button id="confirm-delete-btn" class="btn btn-danger">Delete</button>
-    </div>
-  </div></div>
+    <!-- Toast Notifications -->
+    <div id="toast-container"></div>
 
-  <!-- Loading & Toast -->
-  <div id="loading-spinner" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-    <div class="loading-spinner"></div>
-  </div>
-  <div id="toast-container" class="fixed bottom-4 right-4 space-y-2 z-50"></div>
+    <!-- JavaScript -->
+    <script>
+        // Global variables
+        let currentTab = 'join-requests';
+        let joinRequestsData = [];
+        let membershipsData = [];
+        let currentJoinRequestsPage = 1;
+        let currentMembershipsPage = 1;
+        const rowsPerPage = 10;
+        let sortColumn = 'id';
+        let sortDirection = 'asc';
+        let currentRecordId = null;
+        let currentRecordType = null;
 
-  <!-- SCRIPT -->
-  <script>
-  /***** GLOBAL STATE *****/
-  let joinRequestsData = [], membershipsData = [];
-  let currentTab = 'join-requests';
-  let page = { 'join-requests':1, 'memberships':1 };
-  const rowsPerPage = 10;
-  let sortCol='id', sortDir='asc';
-  let filterText='';
+        // DOM Elements
+        const themeToggle = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const globalSearch = document.getElementById('global-search');
+        const exportBtn = document.getElementById('export-btn');
+        const joinRequestsBody = document.getElementById('join-requests-body');
+        const membershipsBody = document.getElementById('memberships-body');
+        const joinRequestsPagination = document.getElementById('join-requests-pagination');
+        const membershipsPagination = document.getElementById('memberships-pagination');
+        const detailsModal = document.getElementById('details-modal');
+        const detailsModalBody = document.getElementById('details-modal-body');
+        const editModal = document.getElementById('edit-modal');
+        const editModalBody = document.getElementById('edit-modal-body');
+        const saveChangesBtn = document.getElementById('save-changes-btn');
+        const deleteModal = document.getElementById('delete-modal');
+        const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const toastContainer = document.getElementById('toast-container');
+        const closeModalButtons = document.querySelectorAll('.close-modal');
 
-  let activeRecord = { type:null, id:null };
+        // Initialize the admin dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check local storage for theme preference
+            if (localStorage.getItem('theme') === 'light') {
+                htmlElement.setAttribute('data-theme', 'light');
+                themeToggle.checked = true;
+            }
 
-  /***** UTILS *****/
-  function formatDate(val){
-    if(!val) return '-';
-    const d = new Date(val);
-    return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
-  }
-  function showToast(msg, type='success'){
-    const t = document.createElement('div');
-    t.className = `toast ${type}`;
-    t.textContent = msg;
-    document.getElementById('toast-container').append(t);
-    setTimeout(()=>t.remove(),3000);
-  }
-  function showLoading(){ document.getElementById('loading-spinner').classList.remove('hidden'); }
-  function hideLoading(){ document.getElementById('loading-spinner').classList.add('hidden'); }
-  function closeAllModals(){ document.querySelectorAll('.modal.open').forEach(m=>m.classList.remove('open')); }
+            // Load initial data
+            loadJoinRequests();
+            loadMemberships();
 
-  /***** FETCH DATA *****/
-  async function fetchData(type){
-    showLoading();
-    const url = type==='join-requests' ? '/api/join_requests' : '/api/members';
-    try{
-      const res = await fetch(url);
-      if(!res.ok) throw new Error(res.statusText);
-      const data = await res.json();
-      if(type==='join-requests') joinRequestsData = data;
-      else membershipsData = data;
-    }catch(e){
-      showToast(`Error loading ${type}: ${e.message}`,'error');
-    }finally{ hideLoading(); }
-  }
+            // Set up event listeners
+            setupEventListeners();
+        });
 
-  /***** RENDER *****/
-  function renderTable(type){
-    const data = type==='join-requests' ? joinRequestsData : membershipsData;
-    // filter
-    const filtered = data.filter(r=>JSON.stringify(r).toLowerCase().includes(filterText.toLowerCase()));
-    // sort
-    filtered.sort((a,b)=>{
-      let va=a[sortCol], vb=b[sortCol];
-      if(typeof va==='string') va=va.toLowerCase(), vb=vb.toLowerCase();
-      if(va<vb) return sortDir==='asc'? -1:1;
-      if(va>vb) return sortDir==='asc'? 1:-1;
-      return 0;
-    });
-    // paginate
-    const p = page[type];
-    const start = (p-1)*rowsPerPage, end = start+rowsPerPage;
-    const pageData = filtered.slice(start,end);
+        // Set up all event listeners
+        function setupEventListeners() {
+            // Theme toggle
+            themeToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    htmlElement.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    htmlElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
 
-    const body = document.getElementById(type+'-body');
-    body.innerHTML = '';
-    const dateField = type==='join-requests' ? 'date_submitted':'date';
-    pageData.forEach(r=>{
-      const tr=document.createElement('tr');
-      tr.innerHTML = `
-        <td>${r.id}</td>
-        ${ type==='memberships'
-          ? `<td>${r.first_name||'-'}</td><td>${r.last_name||'-'}</td>`
-          : `<td>${r.name||'-'}</td>` }
-        <td>${r.email||'-'}</td>
-        <td>${r.phone||'-'}</td>
-        ${ type==='memberships'
-          ? `<td>${r.city||'-'}</td><td>${r.country||'-'}</td><td>${r.military_veteran||'-'}</td>`
-          : `` }
-        <td>${formatDate(r[dateField])}</td>
-        <td class="space-x-1">
-          <button onclick="openDetails(${r.id},'${type}')" class="action-btn view-btn"><i class="fas fa-eye"></i></button>
-          <button onclick="openEdit(${r.id},'${type}')" class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
-          <button onclick="openDelete(${r.id},'${type}')" class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
-        </td>
-      `;
-      body.appendChild(tr);
-    });
-    renderPagination(filtered.length,type);
-  }
+            // Tab switching
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    switchTab(tabId);
+                });
+            });
 
-  function renderPagination(total,type){
-    const pages = Math.ceil(total/rowsPerPage);
-    const container = document.getElementById(type+'-pagination');
-    container.innerHTML='';
-    if(pages<2) return;
-    for(let i=1;i<=pages;i++){
-      const btn=document.createElement('button');
-      btn.textContent=i;
-      btn.className=`page-item ${i===page[type]?'active':''}`;
-      btn.onclick=()=>{ page[type]=i; renderTable(type); };
-      container.appendChild(btn);
-    }
-  }
+            // Global search
+            globalSearch.addEventListener('input', function() {
+                filterTable();
+            });
 
-  /***** ACTION HANDLERS *****/
-  function openDetails(id,type){
-    const data = (type==='join-requests'?joinRequestsData:membershipsData).find(x=>x.id==id);
-    const body = document.getElementById('details-modal-body');
-    body.innerHTML = Object.entries(data)
-      .map(([k,v])=>`<p><strong>${k}:</strong> ${v||'-'}</p>`).join('');
-    document.getElementById('details-modal').classList.add('open');
-  }
+            // Export button
+            exportBtn.addEventListener('click', function() {
+                exportData();
+            });
 
-  function openEdit(id,type){
-    activeRecord = {id,type};
-    const data = (type==='join-requests'?joinRequestsData:membershipsData).find(x=>x.id==id);
-    const form = document.createElement('form');
-    Object.entries(data).forEach(([k,v])=>{
-      if(k==='id'||k==='date'||k==='date_submitted') return;
-      form.innerHTML += `
-        <div class="form-group">
-          <label class="form-label">${k}</label>
-          <input name="${k}" value="${v||''}" class="form-control"/>
-        </div>`;
-    });
-    const body = document.getElementById('edit-modal-body');
-    body.innerHTML=''; body.appendChild(form);
-    document.getElementById('edit-modal').classList.add('open');
-  }
+            // Table sorting
+            document.querySelectorAll('th[data-column]').forEach(th => {
+                th.addEventListener('click', function() {
+                    const column = this.getAttribute('data-column');
+                    sortTable(column);
+                });
+            });
 
-  async function saveChanges(){
-    const modal = document.getElementById('edit-modal');
-    const inputs = modal.querySelectorAll('input');
-    const payload = {};
-    inputs.forEach(i=>payload[i.name]=i.value);
-    try{
-      showLoading();
-      const url = activeRecord.type==='join-requests'
-        ? `/api/join_requests/${activeRecord.id}`
-        : `/api/members/${activeRecord.id}`;
-      const res = await fetch(url, {
-        method:'PUT',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(payload)
-      });
-      if(!res.ok) throw new Error(res.statusText);
-      showToast('Saved','success');
-      closeAllModals();
-      await loadAll();
-    }catch(e){
-      showToast('Save failed: '+e.message,'error');
-    }finally{ hideLoading() }
-  }
+            // Modal close buttons
+            closeModalButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    closeAllModals();
+                });
+            });
 
-  function openDelete(id,type){
-    activeRecord={id,type};
-    document.getElementById('delete-modal').classList.add('open');
-  }
+            // Click outside modal to close
+            window.addEventListener('click', function(event) {
+                if (event.target.classList.contains('modal')) {
+                    closeAllModals();
+                }
+            });
 
-  async function deleteRecord(){
-    try{
-      showLoading();
-      const url = activeRecord.type==='join-requests'
-        ? `/api/join_requests/${activeRecord.id}`
-        : `/api/members/${activeRecord.id}`;
-      const res = await fetch(url,{method:'DELETE'});
-      if(!res.ok) throw new Error(res.statusText);
-      showToast('Deleted','success');
-      closeAllModals();
-      await loadAll();
-    }catch(e){
-      showToast('Delete failed: '+e.message,'error');
-    }finally{ hideLoading() }
-  }
+            // Save changes button
+            saveChangesBtn.addEventListener('click', function() {
+                saveChanges();
+            });
 
-  /***** SEARCH, SORT & EXPORT *****/
-  function filterAndRender(){
-    filterText=globalSearch.value;
-    renderTable(currentTab);
-  }
+            // Confirm delete button
+            confirmDeleteBtn.addEventListener('click', function() {
+                deleteRecord();
+            });
+        }
 
-  function sortHandler(e){
-    const col=e.currentTarget.getAttribute('data-column');
-    if(sortCol===col) sortDir=sortDir==='asc'?'desc':'asc';
-    else { sortCol=col; sortDir='asc' }
-    renderTable(currentTab);
-  }
+        // Switch between tabs
+        function switchTab(tabId) {
+            currentTab = tabId;
+            
+            // Update active tab button
+            tabButtons.forEach(button => {
+                if (button.getAttribute('data-tab') === tabId) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+            
+            // Show active tab content
+            tabContents.forEach(content => {
+                if (content.id === `${tabId}-content`) {
+                    content.classList.remove('hidden');
+                    content.classList.add('active');
+                } else {
+                    content.classList.add('hidden');
+                    content.classList.remove('active');
+                }
+            });
+            
+            // Update global search placeholder
+            globalSearch.placeholder = tabId === 'join-requests' ? 'Search join requests...' : 'Search memberships...';
+        }
 
-  function exportData(){
-    const data = currentTab==='join-requests'?joinRequestsData:membershipsData;
-    const filtered = data.filter(r=>JSON.stringify(r).toLowerCase().includes(filterText.toLowerCase()));
-    const cols = Object.keys(filtered[0]||{});
-    let csv = cols.join(',')+'\n';
-    filtered.forEach(r=> {
-      csv += cols.map(c=>`"${(r[c]||'').toString().replace(/"/g,'""')}"`).join(',') + '\n';
-    });
-    const blob = new Blob([csv],{type:'text/csv'});
-    const url = URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=url; a.download=`${currentTab}.csv`; a.click();
-    URL.revokeObjectURL(url);
-  }
+        // Load join requests data
+        async function loadJoinRequests() {
+            showLoading();
+            try {
+                const response = await fetch('/api/join');
+                if (!response.ok) throw new Error('Failed to fetch join requests');
+                joinRequestsData = await response.json();
+                renderJoinRequestsTable();
+            } catch (error) {
+                showToast('Error loading join requests: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
 
-  /***** INITIAL LOAD & EVENTS *****/
-  async function loadAll(){
-    await Promise.all([fetchData('join-requests'), fetchData('memberships')]);
-    renderTable(currentTab);
-  }
+        // Load memberships data
+        async function loadMemberships() {
+            showLoading();
+            try {
+                const response = await fetch('/api/members');
+                if (!response.ok) throw new Error('Failed to fetch memberships');
+                membershipsData = await response.json();
+                renderMembershipsTable();
+            } catch (error) {
+                showToast('Error loading memberships: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
 
-  document.querySelectorAll('.tab-button').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      currentTab=btn.getAttribute('data-tab');
-      renderTable(currentTab);
-    });
-  });
+        // Render join requests table
+        function renderJoinRequestsTable(filteredData = null) {
+            const data = filteredData || joinRequestsData;
+            const startIndex = (currentJoinRequestsPage - 1) * rowsPerPage;
+            const paginatedData = data.slice(startIndex, startIndex + rowsPerPage);
+            
+            joinRequestsBody.innerHTML = '';
+            
+            if (paginatedData.length === 0) {
+                joinRequestsBody.innerHTML = '<tr><td colspan="6" class="text-center py-4">No records found</td></tr>';
+                joinRequestsPagination.innerHTML = '';
+                return;
+            }
+            
+            paginatedData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.id}</td>
+                    <td>${item.name || '-'}</td>
+                    <td>${item.email || '-'}</td>
+                    <td>${item.phone || '-'}</td>
+                    <td>${formatDate(item.date_submitted) || '-'}</td>
+                    <td>
+                        <button class="action-btn view-btn" data-id="${item.id}" data-type="join-request">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="action-btn edit-btn" data-id="${item.id}" data-type="join-request">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn delete-btn" data-id="${item.id}" data-type="join-request">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                joinRequestsBody.appendChild(row);
+            });
+            
+            // Add event listeners to action buttons
+            addActionButtonListeners();
+            
+            // Render pagination
+            renderPagination(data.length, rowsPerPage, currentJoinRequestsPage, 'join-requests');
+        }
 
-  document.getElementById('global-search')
-    .addEventListener('input',()=>filterAndRender());
+        // Render memberships table
+        function renderMembershipsTable(filteredData = null) {
+            const data = filteredData || membershipsData;
+            const startIndex = (currentMembershipsPage - 1) * rowsPerPage;
+            const paginatedData = data.slice(startIndex, startIndex + rowsPerPage);
+            
+            membershipsBody.innerHTML = '';
+            
+            if (paginatedData.length === 0) {
+                membershipsBody.innerHTML = '<tr><td colspan="10" class="text-center py-4">No records found</td></tr>';
+                membershipsPagination.innerHTML = '';
+                return;
+            }
+            
+            paginatedData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.id}</td>
+                    <td>${item.first_name || '-'}</td>
+                    <td>${item.last_name || '-'}</td>
+                    <td>${item.email || '-'}</td>
+                    <td>${item.phone || '-'}</td>
+                    <td>${item.city || '-'}</td>
+                    <td>${item.country || '-'}</td>
+                    <td>${item.military_veteran || '-'}</td>
+                    <td>${formatDate(item.date) || '-'}</td>
+                    <td>
+                        <button class="action-btn view-btn" data-id="${item.id}" data-type="membership">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="action-btn edit-btn" data-id="${item.id}" data-type="membership">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn delete-btn" data-id="${item.id}" data-type="membership">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                membershipsBody.appendChild(row);
+            });
+            
+            // Add event listeners to action buttons
+            addActionButtonListeners();
+            
+            // Render pagination
+            renderPagination(data.length, rowsPerPage, currentMembershipsPage, 'memberships');
+        }
 
-  document.querySelectorAll('th[data-column]')
-    .forEach(th=>th.addEventListener('click',sortHandler));
+        // Add event listeners to action buttons
+        function addActionButtonListeners() {
+            document.querySelectorAll('.view-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const type = this.getAttribute('data-type');
+                    viewDetails(id, type);
+                });
+            });
+            
+            document.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const type = this.getAttribute('data-type');
+                    editRecord(id, type);
+                });
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const type = this.getAttribute('data-type');
+                    confirmDelete(id, type);
+                });
+            });
+        }
 
-  document.getElementById('export-btn')
-    .addEventListener('click',exportData);
+        // Render pagination controls
+        function renderPagination(totalItems, itemsPerPage, currentPage, type) {
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            const paginationContainer = type === 'join-requests' ? joinRequestsPagination : membershipsPagination;
+            
+            if (totalPages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            
+            // Previous button
+            if (currentPage > 1) {
+                html += `<button class="page-item" onclick="changePage(${currentPage - 1}, '${type}')">&laquo;</button>`;
+            }
+            
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === currentPage) {
+                    html += `<button class="page-item active">${i}</button>`;
+                } else {
+                    html += `<button class="page-item" onclick="changePage(${i}, '${type}')">${i}</button>`;
+                }
+            }
+            
+            // Next button
+            if (currentPage < totalPages) {
+                html += `<button class="page-item" onclick="changePage(${currentPage + 1}, '${type}')">&raquo;</button>`;
+            }
+            
+            paginationContainer.innerHTML = html;
+        }
 
-  // On load:
-  loadAll();
-  </script>
+        // Change page
+        function changePage(page, type) {
+            if (type === 'join-requests') {
+                currentJoinRequestsPage = page;
+                renderJoinRequestsTable();
+            } else {
+                currentMembershipsPage = page;
+                renderMembershipsTable();
+            }
+            
+            // Scroll to top of table
+            document.querySelector(`#${type}-content`).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Sort table
+        function sortTable(column) {
+            // Update sort direction if clicking the same column
+            if (sortColumn === column) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortColumn = column;
+                sortDirection = 'asc';
+            }
+            
+            // Update sort icons
+            document.querySelectorAll('th[data-column]').forEach(th => {
+                const icon = th.querySelector('.sort-icon');
+                if (th.getAttribute('data-column') === column) {
+                    icon.className = sortDirection === 'asc' ? 'fas fa-sort-up sort-icon' : 'fas fa-sort-down sort-icon';
+                } else {
+                    icon.className = 'fas fa-sort sort-icon';
+                }
+            });
+            
+            // Sort the data
+            if (currentTab === 'join-requests') {
+                joinRequestsData.sort((a, b) => {
+                    const valA = a[column] || '';
+                    const valB = b[column] || '';
+                    
+                    if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+                    if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+                    return 0;
+                });
+                renderJoinRequestsTable();
+            } else {
+                membershipsData.sort((a, b) => {
+                    const valA = a[column] || '';
+                    const valB = b[column] || '';
+                    
+                    if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+                    if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+                    return 0;
+                });
+                renderMembershipsTable();
+            }
+        }
+
+        // Filter table based on search input
+        function filterTable() {
+            const searchTerm = globalSearch.value.toLowerCase();
+            
+            if (!searchTerm) {
+                if (currentTab === 'join-requests') {
+                    renderJoinRequestsTable();
+                } else {
+                    renderMembershipsTable();
+                }
+                return;
+            }
+            
+            if (currentTab === 'join-requests') {
+                const filteredData = joinRequestsData.filter(item => {
+                    return (
+                        (item.id && item.id.toString().includes(searchTerm)) ||
+                        (item.name && item.name.toLowerCase().includes(searchTerm)) ||
+                        (item.email && item.email.toLowerCase().includes(searchTerm)) ||
+                        (item.phone && item.phone.toLowerCase().includes(searchTerm)) ||
+                        (item.date_submitted && item.date_submitted.toLowerCase().includes(searchTerm))
+                    );
+                });
+                renderJoinRequestsTable(filteredData);
+            } else {
+                const filteredData = membershipsData.filter(item => {
+                    return (
+                        (item.id && item.id.toString().includes(searchTerm)) ||
+                        (item.first_name && item.first_name.toLowerCase().includes(searchTerm)) ||
+                        (item.last_name && item.last_name.toLowerCase().includes(searchTerm)) ||
+                        (item.email && item.email.toLowerCase().includes(searchTerm)) ||
+                        (item.phone && item.phone.toLowerCase().includes(searchTerm)) ||
+                        (item.city && item.city.toLowerCase().includes(searchTerm)) ||
+                        (item.country && item.country.toLowerCase().includes(searchTerm)) ||
+                        (item.military_veteran && item.military_veteran.toLowerCase().includes(searchTerm)) ||
+                        (item.date && item.date.toLowerCase().includes(searchTerm))
+                    );
+                });
+                renderMembershipsTable(filteredData);
+            }
+        }
+
+        // Export data to CSV
+        function exportData() {
+            let dataToExport;
+            let filename;
+            
+            if (currentTab === 'join-requests') {
+                dataToExport = joinRequestsData;
+                filename = 'join-requests.csv';
+            } else {
+                dataToExport = membershipsData;
+                filename = 'memberships.csv';
+            }
+            
+            if (dataToExport.length === 0) {
+                showToast('No data to export', 'error');
+                return;
+            }
+            
+            // Convert to CSV
+            const headers = Object.keys(dataToExport[0]);
+            let csv = headers.join(',') + '\n';
+            
+            dataToExport.forEach(item => {
+                const row = headers.map(header => {
+                    let value = item[header] || '';
+                    // Escape quotes and wrap in quotes if contains comma
+                    value = String(value).replace(/"/g, '""');
+                    if (String(value).includes(',')) {
+                        value = `"${value}"`;
+                    }
+                    return value;
+                });
+                csv += row.join(',') + '\n';
+            });
+            
+            // Create download link
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Export completed successfully', 'success');
+        }
+
+        // View record details
+        async function viewDetails(id, type) {
+            showLoading();
+            currentRecordId = id;
+            currentRecordType = type;
+            
+            try {
+                let data;
+                if (type === 'join-request') {
+                    const response = await fetch(`/api/join/${id}`);
+                    if (!response.ok) throw new Error('Failed to fetch join request');
+                    data = await response.json();
+                } else {
+                    const response = await fetch(`/api/members/${id}`);
+                    if (!response.ok) throw new Error('Failed to fetch membership');
+                    data = await response.json();
+                }
+                
+                // Display details in modal
+                detailsModalBody.innerHTML = '';
+                
+                const detailsList = document.createElement('div');
+                detailsList.className = 'space-y-4';
+                
+                for (const [key, value] of Object.entries(data)) {
+                    if (value === null || value === '') continue;
+                    
+                    const detailItem = document.createElement('div');
+                    detailItem.className = 'border-b border-gray-700 pb-2';
+                    
+                    const label = document.createElement('div');
+                    label.className = 'text-sm font-bold text-green-400';
+                    label.textContent = formatKey(key);
+                    
+                    const content = document.createElement('div');
+                    content.className = 'mt-1';
+                    content.textContent = value;
+                    
+                    detailItem.appendChild(label);
+                    detailItem.appendChild(content);
+                    detailsList.appendChild(detailItem);
+                }
+                
+                detailsModalBody.appendChild(detailsList);
+                openModal('details-modal');
+            } catch (error) {
+                showToast('Error loading details: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Edit record
+        async function editRecord(id, type) {
+            showLoading();
+            currentRecordId = id;
+            currentRecordType = type;
+            
+            try {
+                let data;
+                if (type === 'join-request') {
+                    const response = await fetch(`/api/join/${id}`);
+                    if (!response.ok) throw new Error('Failed to fetch join request');
+                    data = await response.json();
+                } else {
+                    const response = await fetch(`/api/members/${id}`);
+                    if (!response.ok) throw new Error('Failed to fetch membership');
+                    data = await response.json();
+                }
+                
+                // Display edit form in modal
+                editModalBody.innerHTML = '';
+                
+                const form = document.createElement('form');
+                form.id = 'edit-form';
+                form.className = 'space-y-4';
+                
+                for (const [key, value] of Object.entries(data)) {
+                    if (key === 'id') continue;
+                    
+                    const formGroup = document.createElement('div');
+                    formGroup.className = 'form-group';
+                    
+                    const label = document.createElement('label');
+                    label.className = 'form-label';
+                    label.textContent = formatKey(key);
+                    label.htmlFor = key;
+                    
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.id = key;
+                    input.name = key;
+                    input.className = 'form-control';
+                    input.value = value || '';
+                    
+                    formGroup.appendChild(label);
+                    formGroup.appendChild(input);
+                    form.appendChild(formGroup);
+                }
+                
+                editModalBody.appendChild(form);
+                openModal('edit-modal');
+            } catch (error) {
+                showToast('Error loading record for editing: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Save changes to record
+        async function saveChanges() {
+            showLoading();
+            saveChangesBtn.disabled = true;
+            
+            try {
+                const formData = {};
+                const form = document.getElementById('edit-form');
+                const inputs = form.querySelectorAll('input');
+                
+                inputs.forEach(input => {
+                    formData[input.name] = input.value;
+                });
+                
+                let response;
+                if (currentRecordType === 'join-request') {
+                    response = await fetch(`/api/join/${currentRecordId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                } else {
+                    response = await fetch(`/api/members/${currentRecordId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                }
+                
+                if (!response.ok) throw new Error('Failed to save changes');
+                
+                const result = await response.json();
+                
+                // Reload data
+                if (currentRecordType === 'join-request') {
+                    await loadJoinRequests();
+                } else {
+                    await loadMemberships();
+                }
+                
+                closeAllModals();
+                showToast('Changes saved successfully', 'success');
+            } catch (error) {
+                showToast('Error saving changes: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+                saveChangesBtn.disabled = false;
+            }
+        }
+
+        // Confirm delete record
+        function confirmDelete(id, type) {
+            currentRecordId = id;
+            currentRecordType = type;
+            openModal('delete-modal');
+        }
+
+        // Delete record
+        async function deleteRecord() {
+            showLoading();
+            confirmDeleteBtn.disabled = true;
+            
+            try {
+                let response;
+                if (currentRecordType === 'join-request') {
+                    response = await fetch(`/api/join/${currentRecordId}`, {
+                        method: 'DELETE'
+                    });
+                } else {
+                    response = await fetch(`/api/members/${currentRecordId}`, {
+                        method: 'DELETE'
+                    });
+                }
+                
+                if (!response.ok) throw new Error('Failed to delete record');
+                
+                const result = await response.json();
+                
+                // Reload data
+                if (currentRecordType === 'join-request') {
+                    await loadJoinRequests();
+                } else {
+                    await loadMemberships();
+                }
+                
+                closeAllModals();
+                showToast('Record deleted successfully', 'success');
+            } catch (error) {
+                showToast('Error deleting record: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+                confirmDeleteBtn.disabled = false;
+            }
+        }
+
+        // Open modal
+        function openModal(modalId) {
+            closeAllModals();
+            document.getElementById(modalId).classList.add('open');
+        }
+
+        // Close all modals
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('open');
+            });
+        }
+
+        // Show loading spinner
+        function showLoading() {
+            loadingSpinner.classList.remove('hidden');
+        }
+
+        // Hide loading spinner
+        function hideLoading() {
+            loadingSpinner.classList.add('hidden');
+        }
+
+        // Show toast notification
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            
+            toastContainer.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+
+        // Format date for display
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        }
+
+        // Format key for display (convert snake_case to Title Case)
+        function formatKey(key) {
+            return key
+                .replace(/_/g, ' ')
+                .replace(/(?:^|\s)\S/g, match => match.toUpperCase());
+        }
+
+        // Make changePage function available globally
+        window.changePage = changePage;
+    </script>
 </body>
 </html>
