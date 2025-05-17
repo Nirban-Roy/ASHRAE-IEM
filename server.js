@@ -75,6 +75,8 @@ app.get("/functions",  (req, res) => res.sendFile(path.join(__dirname, "function
 app.get("/admin", (req, res) => {
   res.sendFile(path.join(__dirname, "admin.html"));
 });
+
+// Get all join requests with formatted date
 app.get("/api/join_requests", (req, res) => {
   db.all("SELECT *, datetime(id, 'unixepoch') AS date_submitted FROM join_requests", [], (err, rows) => {
     if (err) {
@@ -84,8 +86,9 @@ app.get("/api/join_requests", (req, res) => {
     res.json(rows);
   });
 });
-// GET single join request by ID
-app.get("/api/join_requests/:id", (req, res) => {
+
+// GET single join request by ID (used by frontend: /api/join/:id)
+app.get("/api/join/:id", (req, res) => {
   const id = req.params.id;
   db.get("SELECT * FROM join_requests WHERE id = ?", [id], (err, row) => {
     if (err) {
@@ -99,11 +102,12 @@ app.get("/api/join_requests/:id", (req, res) => {
   });
 });
 
-// UPDATE a join request
-app.put("/api/join_requests/:id", (req, res) => {
+// UPDATE join request by ID (frontend expects PUT /api/join/:id)
+app.put("/api/join/:id", (req, res) => {
   const id = req.params.id;
   const fields = req.body;
   const cols = Object.keys(fields);
+
   if (!cols.length) {
     return res.status(400).json({ error: "No fields to update." });
   }
@@ -124,8 +128,8 @@ app.put("/api/join_requests/:id", (req, res) => {
   );
 });
 
-// DELETE a join request
-app.delete("/api/join_requests/:id", (req, res) => {
+// DELETE join request by ID (frontend expects DELETE /api/join/:id)
+app.delete("/api/join/:id", (req, res) => {
   const id = req.params.id;
   db.run("DELETE FROM join_requests WHERE id = ?", [id], function (err) {
     if (err) {
@@ -139,10 +143,12 @@ app.delete("/api/join_requests/:id", (req, res) => {
 // 3c. Join form → INSERT into join_requests
 app.post("/join", (req, res) => {
   const { name, email, phone } = req.body;
+
   const stmt = db.prepare(`
     INSERT INTO join_requests (name, email, phone)
     VALUES (?, ?, ?)
   `);
+
   stmt.run(name, email, phone, function(err) {
     if (err) {
       console.error("Error saving join request:", err);
@@ -150,8 +156,10 @@ app.post("/join", (req, res) => {
     }
     res.status(200).json({ message: "Join request saved.", id: this.lastID });
   });
+
   stmt.finalize();
 });
+
 
 // 3d. Membership form → INSERT into membership
 app.post("/membership", (req, res) => {
