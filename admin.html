@@ -1,118 +1,916 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
-  <title>Admin – Memberships</title>
+  <title>ASHRAE Admin Console</title>
+  <!-- Tailwind + FontAwesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <style>
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #ccc; padding: 6px; }
-    th { background: #f0f0f0; }
-    button { margin-right: 4px; }
-  </style>
+        body {
+            transition: background 0.5s, color 0.5s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Dark Theme Styles */
+        [data-theme="dark"] body {
+            background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+            color: #e8f5e9;
+        }
+
+        [data-theme="dark"] .hero-background {
+            background: #1b2838;
+        }
+
+        [data-theme="dark"] footer {
+            background: linear-gradient(90deg, #0f2027, #2c5364);
+            color: #e8f5e9;
+            border-top: none;
+            box-shadow: none;
+        }
+
+        [data-theme="dark"] #navbar {
+            background-color: rgba(31, 41, 55, 0.9);
+        }
+
+        [data-theme="dark"] .navbar a {
+            color: #e8f5e9;
+        }
+
+        [data-theme="dark"] .navbar a:hover {
+            color: #38ef7d;
+        }
+
+        [data-theme="dark"] .logo {
+            opacity: 0.7;
+        }
+
+        [data-theme="dark"] .btn-green {
+            background: linear-gradient(90deg, #11998e, #38ef7d);
+            color: white;
+            padding: 0.8rem 2.5rem;
+            border-radius: 9999px;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            box-shadow: 0 4px 15px rgba(56, 239, 125, 0.5);
+        }
+
+        [data-theme="dark"] .btn-green:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(56, 239, 125, 0.8);
+        }
+
+        [data-theme="dark"] .modal {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        [data-theme="dark"] .modal-content {
+            background: #1b2838;
+            color: #e8f5e9;
+        }
+
+        [data-theme="dark"] .modal-content h3 {
+            color: #38ef7d;
+        }
+
+        [data-theme="dark"] .modal-content a {
+            color: #38ef7d;
+        }
+
+        [data-theme="dark"] .modal-content a:hover {
+            color: #26C6DA;
+        }
+
+        [data-theme="dark"] .card {
+            background: rgba(0, 0, 0, 0.7);
+            border: none;
+            color: #e8f5e9;
+        }
+
+        [data-theme="dark"] .card h4 {
+            color: #e8f5e9;
+        }
+
+        [data-theme="dark"] .card p {
+            color: #b0c4de;
+        }
+
+        /* Light Theme Styles */
+        [data-theme="light"] body {
+            background: linear-gradient(to bottom, #caf0f8, #ade8f4, #90e0ef);
+            color: #1a202c;
+        }
+
+        [data-theme="light"] .hero-background {
+            background: linear-gradient(to bottom, #caf0f8, #ade8f4, #90e0ef);
+        }
+
+        [data-theme="light"] footer {
+            background: #ffffff;
+            color: #1a202c;
+            border-top: 2px solid #d1d5db;
+            box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="light"] footer p {
+            color: #117CCA;
+        }
+
+        [data-theme="light"] #navbar {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="light"] .navbar a {
+            color: #1a202c;
+        }
+
+        [data-theme="light"] .navbar a:hover {
+            color: #0288D1;
+        }
+
+        [data-theme="light"] .btn-green {
+            background: linear-gradient(90deg, #00b4d8, #48cae4);
+            color: white;
+            padding: 0.8rem 2.5rem;
+            border-radius: 9999px;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            box-shadow: 0 4px 15px rgba(72, 202, 228, 0.5);
+        }
+
+        [data-theme="light"] .btn-green:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(72, 202, 228, 0.8);
+        }
+
+        [data-theme="light"] .modal {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        [data-theme="light"] .modal-content {
+            background: #f0f4f8;
+            border: 1px solid #ccc;
+            color: #1a202c;
+        }
+
+        [data-theme="light"] .modal-content h3 {
+            color: #117CCA;
+        }
+
+        [data-theme="light"] .modal-content a {
+            color: #0264D4;
+            text-decoration: underline;
+        }
+
+        [data-theme="light"] .modal-content a:hover {
+            color: #0288D1;
+        }
+
+        [data-theme="light"] .card {
+            background: #f0f4f8;
+            border: 1px solid #ccc;
+            color: #1a202c;
+        }
+
+        [data-theme="light"] .card h4 {
+            color: #1a202c;
+        }
+
+        [data-theme="light"] .card p {
+            color: #4a5568;
+        }
+
+        /* Navbar Link Hover */
+        .navbar a:hover {
+            color: #26C6DA;
+        }
+
+        /* Logo Opacity */
+        .logo {
+            opacity: 0.9;
+        }
+
+        /* Text Color Adjustments for Light Theme */
+        [data-theme="light"] h1,
+        [data-theme="light"] h2,
+        [data-theme="light"] h3,
+        [data-theme="light"] p {
+            color: #1a202c;
+        }
+
+        [data-theme="light"] .text-green-300 {
+            color: #194C9C;
+        }
+
+        [data-theme="light"] .text-green-400 {
+            color: #26C6DA;
+        }
+
+        [data-theme="light"] .bg-gray-900 {
+            background-color: #ffffff;
+        }
+
+        [data-theme="light"] .bg-gray-800 {
+            background-color: #f7fafc;
+        }
+
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #26C6DA;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Admin-specific styles */
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem 0.5rem 0 0;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background-color: rgba(56, 239, 125, 0.2);
+            border-bottom: 3px solid #38ef7d;
+        }
+
+        [data-theme="light"] .tab-button.active {
+            background-color: rgba(72, 202, 228, 0.2);
+            border-bottom: 3px solid #48cae4;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="light"] th, 
+        [data-theme="light"] td {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        th:hover {
+            background-color: rgba(56, 239, 125, 0.1);
+        }
+
+        [data-theme="light"] th:hover {
+            background-color: rgba(72, 202, 228, 0.1);
+        }
+
+        .sort-icon {
+            margin-left: 0.5rem;
+            opacity: 0.5;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .page-item {
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+
+        .page-item.active {
+            background-color: #38ef7d;
+            color: white;
+        }
+
+        [data-theme="light"] .page-item.active {
+            background-color: #48cae4;
+        }
+
+        .action-btn {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            margin-right: 0.25rem;
+            cursor: pointer;
+        }
+
+        .view-btn {
+            background-color: rgba(56, 239, 125, 0.2);
+            color: #38ef7d;
+        }
+
+        .edit-btn {
+            background-color: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+
+        .delete-btn {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+        }
+
+        .filter-input {
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.05);
+            color: inherit;
+        }
+
+        [data-theme="light"] .filter-input {
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 2rem;
+            height: 2rem;
+            border: 0.25rem solid rgba(56, 239, 125, 0.3);
+            border-radius: 50%;
+            border-top-color: #38ef7d;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast.success {
+            background-color: rgba(56, 239, 125, 0.9);
+            color: white;
+        }
+
+        .toast.error {
+            background-color: rgba(244, 67, 54, 0.9);
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: #1b2838;
+            color: #e8f5e9;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        [data-theme="light"] .modal-content {
+            background: #f0f4f8;
+            color: #1a202c;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #38ef7d;
+        }
+
+        [data-theme="light"] .modal-title {
+            color: #48cae4;
+        }
+
+        .close-modal {
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.05);
+            color: inherit;
+        }
+
+        [data-theme="light"] .form-control {
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .form-col {
+            flex: 1;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #38ef7d;
+            color: white;
+            border: none;
+        }
+
+        [data-theme="light"] .btn-primary {
+            background-color: #48cae4;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid #38ef7d;
+            color: #38ef7d;
+        }
+
+        [data-theme="light"] .btn-secondary {
+            border: 1px solid #48cae4;
+            color: #48cae4;
+        }
+
+        .btn-danger {
+            background-color: #f44336;
+            color: white;
+            border: none;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
-<body>
-  <h1>Membership Submissions</h1>
-  <table id="members-table">
-    <thead id="members-thead"></thead>
-    <tbody id="members-tbody"></tbody>
-  </table>
+<body class="min-h-screen flex flex-col">
 
+  <!-- Navbar -->
+  <header id="navbar" class="p-6 fixed w-full z-50 top-0 shadow-lg bg-opacity-90 backdrop-blur">
+    <div class="container mx-auto flex justify-between items-center">
+      <div class="flex items-center">
+        <img src="Branch Logo.png" alt="Logo" class="h-12 w-12 logo mr-4">
+        <h1 class="text-2xl font-extrabold">ASHRAE Admin Console</h1>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="/" class="hover:text-green-400">Back to Site</a>
+        <label class="toggle-switch">
+          <input type="checkbox" id="theme-toggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="flex-grow pt-24 pb-12 px-6 container mx-auto">
+    <div class="bg-gray-800 bg-opacity-50 rounded-lg shadow-xl p-6 transition-colors">
+      <!-- Tabs -->
+      <div class="flex border-b border-gray-700 mb-6">
+        <button class="tab-button active" data-tab="join-requests">Join Requests</button>
+        <button class="tab-button" data-tab="memberships">Memberships</button>
+      </div>
+
+      <!-- Search & Export -->
+      <div class="flex flex-col md:flex-row gap-4 mb-6">
+        <input id="global-search" type="text" placeholder="Search…" class="filter-input flex-grow"/>
+        <button id="export-btn" class="btn btn-secondary">
+          <i class="fas fa-download mr-2"></i>Export CSV
+        </button>
+      </div>
+
+      <!-- Join Requests Table -->
+      <div id="join-requests-content" class="tab-content active">
+        <div class="table-container overflow-x-auto">
+          <table class="min-w-full">
+            <thead>
+              <tr>
+                <th data-column="id">ID <i class="fas fa-sort sort-icon"></i></th>
+                <th data-column="name">Name <i class="fas fa-sort sort-icon"></i></th>
+                <th data-column="email">Email <i class="fas fa-sort sort-icon"></i></th>
+                <th data-column="phone">Phone <i class="fas fa-sort sort-icon"></i></th>
+                <th data-column="date_submitted">Date <i class="fas fa-sort sort-icon"></i></th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="join-requests-body"></tbody>
+          </table>
+        </div>
+        <div id="join-requests-pagination" class="pagination mt-4"></div>
+      </div>
+
+      <!-- Memberships Table -->
+      <div id="memberships-content" class="tab-content hidden">
+        <div class="table-container overflow-x-auto">
+          <table class="min-w-full">
+            <thead>
+              <tr>
+                <th data-column="id">ID <i class="fas fa-sort sort-icon"></i></th>
+                <th data-column="first_name">First Name <i class="fas fa-sort sort-icon"></i></th>
+                <th data-column="last_name">Last Name <i class="fas fa-sort sort-icon"></i></th>
+                <th data-column="email">Email <i class="fas fa-sort sort-icon"></i></th>
+                <th data-column="phone">Phone <i class="fas fa-sort sort-icon"></i></th>
+                <th data-column="city">City <i class="fas fa-sort sort-icon"></i></th>
+                <th data-column="country">Country <i class="fas fa-sort sort-icon"></i></th>
+                <th data-column="military_veteran">Veteran <i class="fas fa-sort sort-icon"></i></th>
+                <th data-column="date">Date <i class="fas fa-sort sort-icon"></i></th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="memberships-body"></tbody>
+          </table>
+        </div>
+        <div id="memberships-pagination" class="pagination mt-4"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modals & Helpers -->
+  <!-- Details Modal -->
+  <div id="details-modal" class="modal"><div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title">Record Details</h3>
+      <span class="close-modal">&times;</span>
+    </div>
+    <div class="modal-body" id="details-modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary close-modal">Close</button>
+    </div>
+  </div></div>
+
+  <!-- Edit Modal -->
+  <div id="edit-modal" class="modal"><div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title">Edit Record</h3>
+      <span class="close-modal">&times;</span>
+    </div>
+    <div class="modal-body" id="edit-modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary close-modal">Cancel</button>
+      <button id="save-changes-btn" class="btn btn-primary">Save Changes</button>
+    </div>
+  </div></div>
+
+  <!-- Delete Modal -->
+  <div id="delete-modal" class="modal"><div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title">Confirm Deletion</h3>
+      <span class="close-modal">&times;</span>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure? This cannot be undone.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary close-modal">Cancel</button>
+      <button id="confirm-delete-btn" class="btn btn-danger">Delete</button>
+    </div>
+  </div></div>
+
+  <!-- Loading & Toast -->
+  <div id="loading-spinner" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="loading-spinner"></div>
+  </div>
+  <div id="toast-container" class="fixed bottom-4 right-4 space-y-2 z-50"></div>
+
+  <!-- SCRIPT -->
   <script>
-    // Load and render all members
-    async function loadMembers() {
-      const res = await fetch('/api/members');
-      const members = await res.json();
-      const thead = document.getElementById('members-thead');
-      const tbody = document.getElementById('members-tbody');
-      thead.innerHTML = '';
-      tbody.innerHTML = '';
+  /***** GLOBAL STATE *****/
+  let joinRequestsData = [], membershipsData = [];
+  let currentTab = 'join-requests';
+  let page = { 'join-requests':1, 'memberships':1 };
+  const rowsPerPage = 10;
+  let sortCol='id', sortDir='asc';
+  let filterText='';
 
-      if (members.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="100%">No entries.</td></tr>';
-        return;
-      }
+  let activeRecord = { type:null, id:null };
 
-      // Column headers
-      const cols = Object.keys(members[0]);
-      const headerRow = document.createElement('tr');
-      cols.forEach(c => {
-        const th = document.createElement('th');
-        th.textContent = c;
-        headerRow.appendChild(th);
-      });
-      const actionTh = document.createElement('th');
-      actionTh.textContent = 'Actions';
-      headerRow.appendChild(actionTh);
-      thead.appendChild(headerRow);
+  /***** UTILS *****/
+  function formatDate(val){
+    if(!val) return '-';
+    const d = new Date(val);
+    return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
+  }
+  function showToast(msg, type='success'){
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.textContent = msg;
+    document.getElementById('toast-container').append(t);
+    setTimeout(()=>t.remove(),3000);
+  }
+  function showLoading(){ document.getElementById('loading-spinner').classList.remove('hidden'); }
+  function hideLoading(){ document.getElementById('loading-spinner').classList.add('hidden'); }
+  function closeAllModals(){ document.querySelectorAll('.modal.open').forEach(m=>m.classList.remove('open')); }
 
-      // Rows
-      members.forEach(mem => {
-        const tr = document.createElement('tr');
-        cols.forEach(c => {
-          const td = document.createElement('td');
-          td.textContent = mem[c];
-          td.dataset.field = c;
-          tr.appendChild(td);
-        });
-        // Actions cell
-        const act = document.createElement('td');
-        const del = document.createElement('button');
-        del.textContent = 'Delete';
-        del.onclick = () => deleteMember(mem.id);
-        act.appendChild(del);
-        const edt = document.createElement('button');
-        edt.textContent = 'Edit';
-        edt.onclick = () => enableEdit(tr, mem.id);
-        act.appendChild(edt);
-        tr.appendChild(act);
-        tbody.appendChild(tr);
-      });
+  /***** FETCH DATA *****/
+  async function fetchData(type){
+    showLoading();
+    const url = type==='join-requests' ? '/api/join_requests' : '/api/members';
+    try{
+      const res = await fetch(url);
+      if(!res.ok) throw new Error(res.statusText);
+      const data = await res.json();
+      if(type==='join-requests') joinRequestsData = data;
+      else membershipsData = data;
+    }catch(e){
+      showToast(`Error loading ${type}: ${e.message}`,'error');
+    }finally{ hideLoading(); }
+  }
+
+  /***** RENDER *****/
+  function renderTable(type){
+    const data = type==='join-requests' ? joinRequestsData : membershipsData;
+    // filter
+    const filtered = data.filter(r=>JSON.stringify(r).toLowerCase().includes(filterText.toLowerCase()));
+    // sort
+    filtered.sort((a,b)=>{
+      let va=a[sortCol], vb=b[sortCol];
+      if(typeof va==='string') va=va.toLowerCase(), vb=vb.toLowerCase();
+      if(va<vb) return sortDir==='asc'? -1:1;
+      if(va>vb) return sortDir==='asc'? 1:-1;
+      return 0;
+    });
+    // paginate
+    const p = page[type];
+    const start = (p-1)*rowsPerPage, end = start+rowsPerPage;
+    const pageData = filtered.slice(start,end);
+
+    const body = document.getElementById(type+'-body');
+    body.innerHTML = '';
+    const dateField = type==='join-requests' ? 'date_submitted':'date';
+    pageData.forEach(r=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML = `
+        <td>${r.id}</td>
+        ${ type==='memberships'
+          ? `<td>${r.first_name||'-'}</td><td>${r.last_name||'-'}</td>`
+          : `<td>${r.name||'-'}</td>` }
+        <td>${r.email||'-'}</td>
+        <td>${r.phone||'-'}</td>
+        ${ type==='memberships'
+          ? `<td>${r.city||'-'}</td><td>${r.country||'-'}</td><td>${r.military_veteran||'-'}</td>`
+          : `` }
+        <td>${formatDate(r[dateField])}</td>
+        <td class="space-x-1">
+          <button onclick="openDetails(${r.id},'${type}')" class="action-btn view-btn"><i class="fas fa-eye"></i></button>
+          <button onclick="openEdit(${r.id},'${type}')" class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+          <button onclick="openDelete(${r.id},'${type}')" class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+        </td>
+      `;
+      body.appendChild(tr);
+    });
+    renderPagination(filtered.length,type);
+  }
+
+  function renderPagination(total,type){
+    const pages = Math.ceil(total/rowsPerPage);
+    const container = document.getElementById(type+'-pagination');
+    container.innerHTML='';
+    if(pages<2) return;
+    for(let i=1;i<=pages;i++){
+      const btn=document.createElement('button');
+      btn.textContent=i;
+      btn.className=`page-item ${i===page[type]?'active':''}`;
+      btn.onclick=()=>{ page[type]=i; renderTable(type); };
+      container.appendChild(btn);
     }
+  }
 
-    // DELETE
-    async function deleteMember(id) {
-      if (!confirm(`Delete #${id}?`)) return;
-      const res = await fetch(`/api/members/${id}`, { method: 'DELETE' });
-      if (res.ok) loadMembers();
-      else alert('Delete failed');
-    }
+  /***** ACTION HANDLERS *****/
+  function openDetails(id,type){
+    const data = (type==='join-requests'?joinRequestsData:membershipsData).find(x=>x.id==id);
+    const body = document.getElementById('details-modal-body');
+    body.innerHTML = Object.entries(data)
+      .map(([k,v])=>`<p><strong>${k}:</strong> ${v||'-'}</p>`).join('');
+    document.getElementById('details-modal').classList.add('open');
+  }
 
-    // Switch row to editable inputs
-    function enableEdit(tr, id) {
-      tr.querySelectorAll('td[data-field]').forEach(td => {
-        const val = td.textContent;
-        td.innerHTML = `<input value="${val}" style="width:100px">`;
+  function openEdit(id,type){
+    activeRecord = {id,type};
+    const data = (type==='join-requests'?joinRequestsData:membershipsData).find(x=>x.id==id);
+    const form = document.createElement('form');
+    Object.entries(data).forEach(([k,v])=>{
+      if(k==='id'||k==='date'||k==='date_submitted') return;
+      form.innerHTML += `
+        <div class="form-group">
+          <label class="form-label">${k}</label>
+          <input name="${k}" value="${v||''}" class="form-control"/>
+        </div>`;
+    });
+    const body = document.getElementById('edit-modal-body');
+    body.innerHTML=''; body.appendChild(form);
+    document.getElementById('edit-modal').classList.add('open');
+  }
+
+  async function saveChanges(){
+    const modal = document.getElementById('edit-modal');
+    const inputs = modal.querySelectorAll('input');
+    const payload = {};
+    inputs.forEach(i=>payload[i.name]=i.value);
+    try{
+      showLoading();
+      const url = activeRecord.type==='join-requests'
+        ? `/api/join_requests/${activeRecord.id}`
+        : `/api/members/${activeRecord.id}`;
+      const res = await fetch(url, {
+        method:'PUT',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload)
       });
-      const actions = tr.lastElementChild;
-      actions.innerHTML = '';
-      const save = document.createElement('button');
-      save.textContent = 'Save';
-      save.onclick = () => saveEdit(tr, id);
-      actions.appendChild(save);
-      const cancel = document.createElement('button');
-      cancel.textContent = 'Cancel';
-      cancel.onclick = () => loadMembers();
-      actions.appendChild(cancel);
-    }
+      if(!res.ok) throw new Error(res.statusText);
+      showToast('Saved','success');
+      closeAllModals();
+      await loadAll();
+    }catch(e){
+      showToast('Save failed: '+e.message,'error');
+    }finally{ hideLoading() }
+  }
 
-    // PUT updates back to server
-    async function saveEdit(tr, id) {
-      const inputs = tr.querySelectorAll('td[data-field] input');
-      const payload = {};
-      inputs.forEach(inp => {
-        const field = inp.parentElement.dataset.field;
-        payload[field] = inp.value;
-      });
-      const res = await fetch(`/api/members/${id}`, {
-        method: 'PUT',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify(payload)
-      });
-      if (res.ok) loadMembers();
-      else alert('Save failed');
-    }
+  function openDelete(id,type){
+    activeRecord={id,type};
+    document.getElementById('delete-modal').classList.add('open');
+  }
 
-    window.onload = loadMembers;
+  async function deleteRecord(){
+    try{
+      showLoading();
+      const url = activeRecord.type==='join-requests'
+        ? `/api/join_requests/${activeRecord.id}`
+        : `/api/members/${activeRecord.id}`;
+      const res = await fetch(url,{method:'DELETE'});
+      if(!res.ok) throw new Error(res.statusText);
+      showToast('Deleted','success');
+      closeAllModals();
+      await loadAll();
+    }catch(e){
+      showToast('Delete failed: '+e.message,'error');
+    }finally{ hideLoading() }
+  }
+
+  /***** SEARCH, SORT & EXPORT *****/
+  function filterAndRender(){
+    filterText=globalSearch.value;
+    renderTable(currentTab);
+  }
+
+  function sortHandler(e){
+    const col=e.currentTarget.getAttribute('data-column');
+    if(sortCol===col) sortDir=sortDir==='asc'?'desc':'asc';
+    else { sortCol=col; sortDir='asc' }
+    renderTable(currentTab);
+  }
+
+  function exportData(){
+    const data = currentTab==='join-requests'?joinRequestsData:membershipsData;
+    const filtered = data.filter(r=>JSON.stringify(r).toLowerCase().includes(filterText.toLowerCase()));
+    const cols = Object.keys(filtered[0]||{});
+    let csv = cols.join(',')+'\n';
+    filtered.forEach(r=> {
+      csv += cols.map(c=>`"${(r[c]||'').toString().replace(/"/g,'""')}"`).join(',') + '\n';
+    });
+    const blob = new Blob([csv],{type:'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url; a.download=`${currentTab}.csv`; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  /***** INITIAL LOAD & EVENTS *****/
+  async function loadAll(){
+    await Promise.all([fetchData('join-requests'), fetchData('memberships')]);
+    renderTable(currentTab);
+  }
+
+  document.querySelectorAll('.tab-button').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      currentTab=btn.getAttribute('data-tab');
+      renderTable(currentTab);
+    });
+  });
+
+  document.getElementById('global-search')
+    .addEventListener('input',()=>filterAndRender());
+
+  document.querySelectorAll('th[data-column]')
+    .forEach(th=>th.addEventListener('click',sortHandler));
+
+  document.getElementById('export-btn')
+    .addEventListener('click',exportData);
+
+  // On load:
+  loadAll();
   </script>
 </body>
 </html>
