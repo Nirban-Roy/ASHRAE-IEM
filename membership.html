@@ -86,7 +86,11 @@
             border: none;
             color: #e8f5e9;
         }
-
+        [data-theme="dark"] select,
+        [data-theme="dark"] select option {
+            background-color: #1b2838;
+            color: #e8f5e9;
+        }
         /* Light Theme Styles */
         [data-theme="light"] body {
             background: linear-gradient(to bottom, #caf0f8, #ade8f4, #90e0ef);
@@ -226,10 +230,6 @@
         input:checked + .slider:before {
             transform: translateX(26px);
         }
-[data-theme="dark"] select option[value=""] {
-    color: #94a3b8 !important; /* light gray hint text */
-    font-style: italic;
-}
     </style>
 </head>
 <body class="min-h-screen flex flex-col" data-theme="dark">
