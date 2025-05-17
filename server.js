@@ -35,32 +35,25 @@ app.post("/join", async (req, res) => {
   try {
     const { name, email, phone } = req.body;
 
-    // ask Supabase to give us back the inserted row(s)
+    // insert + ask Supabase to return the inserted row
     const { data, error } = await supabase
       .from("join_requests")
-      .insert(
-        [{ name, email, phone }],
-        { returning: "representation" }
-      );
+      .insert([{ name, email, phone }])
+      .select("id")
+      .single();
 
     if (error) {
       console.error("Supabase insert error:", error);
       return res.status(500).json({ error: "Failed to save join request." });
     }
-    // guard against an empty or null data array
-    if (!data || data.length === 0) {
-      console.error("Insert returned no rows:", data);
-      return res.status(500).json({ error: "No record was created." });
-    }
 
-    // safe to read data[0].id now
+    // data.id now contains the new row’s id
     res.status(201).json({
       message: "Join request saved.",
-      id: data[0].id
+      id: data.id
     });
 
   } catch (err) {
-    // catches ANY unexpected bug in this handler
     console.error("Unexpected error in /join:", err);
     res.status(500).json({ error: "Internal server error." });
   }
@@ -126,27 +119,39 @@ app.delete("/api/join/:id", async (req, res) => {
 
 // Submit membership form
 app.post("/membership", async (req, res) => {
-  // Check if form is accepting responses
-  const { data: setting, error: settingErr } = await supabase
-    .from("settings")
-    .select("value")
-    .eq("key", "accept_membership")
-    .single();
+  try {
+    // 1) check if form is enabled
+    const { data: setting, error: settingErr } = await supabase
+      .from("settings")
+      .select("value")
+      .eq("key", "accept_membership")
+      .single();
 
-  if (settingErr || setting.value !== "yes") {
-    return res.status(403).json({ error: "Form is not currently accepting responses." });
+    if (settingErr || setting.value !== "yes") {
+      return res.status(403).json({ error: "Form is not currently accepting responses." });
+    }
+
+    // 2) insert + return id
+    const { data, error } = await supabase
+      .from("membership")
+      .insert([req.body])
+      .select("id")
+      .single();
+
+    if (error) {
+      console.error("Supabase membership insert error:", error);
+      return res.status(500).json({ error: "Failed to save membership." });
+    }
+
+    res.status(201).json({
+      message: "Membership saved.",
+      id: data.id
+    });
+
+  } catch (err) {
+    console.error("Unexpected error in /membership:", err);
+    res.status(500).json({ error: "Internal server error." });
   }
-
-  // Insert membership
-  const { data, error } = await supabase
-    .from("membership")
-    .insert([req.body]);
-
-  if (error) {
-    console.error("Supabase membership insert error:", error);
-    return res.status(500).json({ error: "Failed to save membership." });
-  }
-  res.status(200).json({ message: "Membership saved.", id: data[0].id });
 });
 
 // Get all members
