@@ -565,7 +565,7 @@
                 <h1 class="text-2xl font-extrabold tracking-wide">ASHRAE IEM Admin Console</h1>
             </div>
             <nav class="navbar flex gap-6 items-center">
-                <a href="index.html" class="hover:text-green-400">Back to Site</a>
+                <a href="index.html" class="hover:text-green-400">Home</a>
                 <!-- Toggle Switch -->
                 <label class="toggle-switch ml-4">
                     <input type="checkbox" id="theme-toggle">
@@ -867,7 +867,7 @@
         async function loadJoinRequests() {
             showLoading();
             try {
-                const response = await fetch('/api/join');
+                const response = await fetch('/api/join_requests');
                 if (!response.ok) throw new Error('Failed to fetch join requests');
                 joinRequestsData = await response.json();
                 renderJoinRequestsTable();
