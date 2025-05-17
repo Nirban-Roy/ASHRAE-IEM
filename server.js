@@ -176,7 +176,6 @@ app.post("/join", (req, res) => {
 
 
 // 3d. Membership form → INSERT into membership
-// 3d. Membership form → INSERT into membership
 app.post("/membership", (req, res) => {
   db.get(`SELECT value FROM settings WHERE key = 'accept_membership'`, (err, row) => {
     if (err) {
@@ -187,7 +186,7 @@ app.post("/membership", (req, res) => {
       return res.status(403).json({ error: "Form is not currently accepting responses." });
     }
 
-    // Continue inserting if allowed
+    // Destructure request data
     const {
       email, country, first_name, middle_name, last_name,
       military_veteran, birth_month, birth_day, birth_year,
@@ -203,7 +202,7 @@ app.post("/membership", (req, res) => {
         company, address_type, address1, address2, city,
         state, zip, phone, title, firm, \`function\`,
         interest, promo_code
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     stmt.run(
@@ -223,6 +222,7 @@ app.post("/membership", (req, res) => {
     stmt.finalize();
   });
 });
+
 
 
 // 3e. Membership JSON API for Admin
