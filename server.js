@@ -21,7 +21,20 @@ const db = new sqlite3.Database(path.join(__dirname, "app.db"), err => {
 });
 
 // Create tables if they don't exist
+// Create tables if they don't exist
 db.serialize(() => {
+  // Membership form control
+  db.run(`
+    CREATE TABLE IF NOT EXISTS settings (
+      key TEXT PRIMARY KEY,
+      value TEXT
+    )
+  `);
+
+  db.run(`
+    INSERT OR IGNORE INTO settings (key, value) VALUES ('accept_membership', 'yes')
+  `);
+
   db.run(`
     CREATE TABLE IF NOT EXISTS membership (
       id                INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -162,41 +175,54 @@ app.post("/join", (req, res) => {
 
 
 // 3d. Membership form → INSERT into membership
+// 3d. Membership form → INSERT into membership
 app.post("/membership", (req, res) => {
-  const {
-    email, country, first_name, middle_name, last_name,
-    military_veteran, birth_month, birth_day, birth_year,
-    company, address_type, address1, address2, city,
-    state, zip, phone, title, firm, function: func,
-    interest, promo_code
-  } = req.body;
+  db.get(`SELECT value FROM settings WHERE key = 'accept_membership'`, (err, row) => {
+    if (err) {
+      console.error("Setting check failed:", err);
+      return res.status(500).json({ error: "Internal server error." });
+    }
+    if (!row || row.value !== 'yes') {
+      return res.status(403).json({ error: "Form is not currently accepting responses." });
+    }
 
-  const stmt = db.prepare(`
-    INSERT INTO membership (
+    // Continue inserting if allowed
+    const {
       email, country, first_name, middle_name, last_name,
       military_veteran, birth_month, birth_day, birth_year,
       company, address_type, address1, address2, city,
-      state, zip, phone, title, firm, \`function\`,
+      state, zip, phone, title, firm, function: func,
       interest, promo_code
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `);
+    } = req.body;
 
-  stmt.run(
-    email, country, first_name, middle_name, last_name,
-    military_veteran, birth_month, birth_day, birth_year,
-    company, address_type, address1, address2, city,
-    state, zip, phone, title, firm, func,
-    interest, promo_code,
-    function(err) {
-      if (err) {
-        console.error("Error saving membership:", err);
-        return res.status(500).json({ error: "Failed to save membership." });
+    const stmt = db.prepare(`
+      INSERT INTO membership (
+        email, country, first_name, middle_name, last_name,
+        military_veteran, birth_month, birth_day, birth_year,
+        company, address_type, address1, address2, city,
+        state, zip, phone, title, firm, \`function\`,
+        interest, promo_code
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    stmt.run(
+      email, country, first_name, middle_name, last_name,
+      military_veteran, birth_month, birth_day, birth_year,
+      company, address_type, address1, address2, city,
+      state, zip, phone, title, firm, func,
+      interest, promo_code,
+      function(err) {
+        if (err) {
+          console.error("Error saving membership:", err);
+          return res.status(500).json({ error: "Failed to save membership." });
+        }
+        res.status(200).json({ message: "Membership saved.", id: this.lastID });
       }
-      res.status(200).json({ message: "Membership saved.", id: this.lastID });
-    }
-  );
-  stmt.finalize();
+    );
+    stmt.finalize();
+  });
 });
+
 
 // 3e. Membership JSON API for Admin
 
