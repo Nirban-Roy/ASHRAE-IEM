@@ -587,6 +587,17 @@
                     Membership Submissions
                 </button>
             </div>
+            
+            <!-- Toggle Accept Membership -->
+            <div class="flex items-center gap-3 mb-6">
+                <label class="text-green-300 font-medium text-lg">Accept Membership Submissions</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-acceptance">
+                    <span class="slider"></span>
+                </label>
+                <span id="acceptance-status" class="text-sm"></span>
+            </div>
+
 
             <!-- Search and Filters -->
             <div class="mb-6 flex flex-col md:flex-row gap-4">
@@ -753,6 +764,8 @@
         const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
         const loadingSpinner = document.getElementById('loading-spinner');
         const toastContainer = document.getElementById('toast-container');
+        const acceptanceToggle = document.getElementById('toggle-acceptance');
+        const acceptanceStatus = document.getElementById('acceptance-status');
         const closeModalButtons = document.querySelectorAll('.close-modal');
 
         // Initialize the admin dashboard
@@ -766,6 +779,8 @@
             // Load initial data
             loadJoinRequests();
             loadMemberships();
+            loadAcceptanceSetting();
+
 
             // Set up event listeners
             setupEventListeners();
@@ -1456,6 +1471,41 @@
 
         // Make changePage function available globally
         window.changePage = changePage;
+        function loadAcceptanceSetting() {
+    fetch('/api/settings/accept_membership')
+        .then(res => res.json())
+        .then(data => {
+            acceptanceToggle.checked = data.value === 'yes';
+            updateAcceptanceLabel();
+        })
+        .catch(err => {
+            console.error(err);
+            showToast('Error loading membership toggle', 'error');
+        });
+}
+
+        function updateAcceptanceLabel() {
+            acceptanceStatus.textContent = acceptanceToggle.checked ? 'Enabled' : 'Disabled';
+        }
+        
+        acceptanceToggle.addEventListener('change', () => {
+            const newValue = acceptanceToggle.checked ? 'yes' : 'no';
+            fetch('/api/settings/accept_membership', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ value: newValue })
+            })
+            .then(res => res.json())
+            .then(data => {
+                updateAcceptanceLabel();
+                showToast('Membership setting updated', 'success');
+            })
+            .catch(err => {
+                console.error(err);
+                showToast('Failed to update membership setting', 'error');
+            });
+        });
+
     </script>
 </body>
 </html>
