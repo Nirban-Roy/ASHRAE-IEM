@@ -313,21 +313,6 @@ app.put("/api/settings/:key", (req, res) => {
   );
 });
 
-app.get('/enable-form', (req, res) => {
-  const sqlite3 = require('sqlite3').verbose();
-  const db = new sqlite3.Database('app.db');
-
-  db.run("UPDATE settings SET value = 'yes' WHERE key = 'accept_membership'", function(err) {
-    if (err) {
-      console.error('DB Update Error:', err);
-      return res.status(500).send('❌ Failed to enable form');
-    }
-    console.log('✅ Form enabled via /enable-form route');
-    res.send('✅ Form submissions are now accepted.');
-    db.close();
-  });
-});
-
 // 4. START SERVER
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
