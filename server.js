@@ -75,7 +75,15 @@ app.get("/functions",  (req, res) => res.sendFile(path.join(__dirname, "function
 app.get("/admin", (req, res) => {
   res.sendFile(path.join(__dirname, "admin.html"));
 });
-
+app.get("/api/join_requests", (req, res) => {
+  db.all("SELECT *, datetime(id, 'unixepoch') AS date_submitted FROM join_requests", [], (err, rows) => {
+    if (err) {
+      console.error("Error fetching join requests:", err);
+      return res.status(500).json({ error: "Failed to fetch join requests." });
+    }
+    res.json(rows);
+  });
+});
 // 3c. Join form → INSERT into join_requests
 app.post("/join", (req, res) => {
   const { name, email, phone } = req.body;
