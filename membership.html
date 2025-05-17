@@ -588,27 +588,25 @@
                     };
 
                     // Send data to your Node.js backend endpoint
-                    fetch('http://localhost:3000/membership', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(formData),
-})
-.then(response => 
-    response.json().then(data => {
-        if (response.ok) {
-            alert('Your application has been submitted successfully.');
-            membershipForm.reset();
-        } else {
-            alert(data.error || 'There was an error submitting your application. Please try again later.');
-        }
-    })
-)
-.catch((error) => {
-    console.error('Error:', error);
-    alert('There was an error submitting your application. Please try again later.');
-});
+                    fetch('/membership', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(formData)
+                    })
+                    .then(async response => {
+                      const data = await response.json();
+                      if (response.ok) {
+                        alert('Your application has been submitted successfully.');
+                        membershipForm.reset();
+                      } else {
+                        // if you hit the 403 from settings, you'll see your error message
+                        alert(data.error || 'There was an error submitting your application. Please try again later.');
+                      }
+                    })
+                    .catch(error => {
+                      console.error('Fetch error:', error);
+                      alert('There was an error submitting your application. Please try again later.');
+                    });
 
                 });
             }
