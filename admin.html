@@ -729,6 +729,32 @@
 
     <!-- Toast Notifications -->
     <div id="toast-container"></div>
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+  const supabaseClient = createClient(
+    'https://txggdpttymcrtmuioagf.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.…Ord32WnK…'
+  );
+
+  // Listen for new join_requests
+  supabaseClient
+    .from('join_requests')
+    .on('INSERT', payload => {
+      // prepend to your in-memory array and re-render table
+      joinRequestsData.unshift(payload.new);
+      renderJoinRequestsTable();
+    })
+    .subscribe();
+
+  // Similarly for membership
+  supabaseClient
+    .from('membership')
+    .on('INSERT', payload => {
+      membershipsData.unshift(payload.new);
+      renderMembershipsTable();
+    })
+    .subscribe();
+</script>
 
     <!-- JavaScript -->
     <script>
