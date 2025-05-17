@@ -32,16 +32,38 @@ app.get("/admin",      (req, res) => res.sendFile(path.join(__dirname, "admin.ht
 
 // Create a join request
 app.post("/join", async (req, res) => {
-  const { name, email, phone } = req.body;
-  const { data, error } = await supabase
-    .from("join_requests")
-    .insert([{ name, email, phone }]);
+  try {
+    const { name, email, phone } = req.body;
 
-  if (error) {
-    console.error("Supabase insert error:", error);
-    return res.status(500).json({ error: "Failed to save join request." });
+    // ask Supabase to give us back the inserted row(s)
+    const { data, error } = await supabase
+      .from("join_requests")
+      .insert(
+        [{ name, email, phone }],
+        { returning: "representation" }
+      );
+
+    if (error) {
+      console.error("Supabase insert error:", error);
+      return res.status(500).json({ error: "Failed to save join request." });
+    }
+    // guard against an empty or null data array
+    if (!data || data.length === 0) {
+      console.error("Insert returned no rows:", data);
+      return res.status(500).json({ error: "No record was created." });
+    }
+
+    // safe to read data[0].id now
+    res.status(201).json({
+      message: "Join request saved.",
+      id: data[0].id
+    });
+
+  } catch (err) {
+    // catches ANY unexpected bug in this handler
+    console.error("Unexpected error in /join:", err);
+    res.status(500).json({ error: "Internal server error." });
   }
-  res.status(200).json({ message: "Join request saved.", id: data[0].id });
 });
 
 // Get all join requests
