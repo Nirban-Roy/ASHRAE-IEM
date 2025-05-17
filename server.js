@@ -3,80 +3,22 @@
 const express    = require("express");
 const bodyParser = require("body-parser");
 const path       = require("path");
-const sqlite3    = require("sqlite3").verbose();
+const { createClient } = require("@supabase/supabase-js");
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-// 1. MIDDLEWARE
+// 1. SUPABASE SETUP
+const supabase = createClient(
+  "https://txggdpttymcrtmuioagf.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4Z2dkcHR0eW1jcnRtdWlvYWdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc0ODc4NjYsImV4cCI6MjA2MzA2Mzg2Nn0.Ord32WnKOADFxIIMPXu7_rkm6ZwcDDmgIvr0bL4TSN0"
+);
+
+// 2. MIDDLEWARE
 app.use(bodyParser.json());
-app.use(express.static(__dirname));  // serve all your .html/.css/.js/images
+app.use(express.static(__dirname));  // serve your .html/.css/.js/images
 
-// 2. SQLITE SETUP
-const db = new sqlite3.Database(path.join(__dirname, "app.db"), err => {
-  if (err) {
-    console.error("Failed to open database:", err);
-    process.exit(1);
-  }
-});
-
-// Create tables if they don't exist
-// Create tables if they don't exist
-db.serialize(() => {
-  // Membership form control
-  db.run(`
-    CREATE TABLE IF NOT EXISTS settings (
-      key TEXT PRIMARY KEY,
-      value TEXT
-    )
-  `);
-
-  db.run(`
-    INSERT OR IGNORE INTO settings (key, value) VALUES ('accept_membership', 'yes')
-  `);
-
-  db.run(`
-    CREATE TABLE IF NOT EXISTS membership (
-      id                INTEGER PRIMARY KEY AUTOINCREMENT,
-      email             TEXT,
-      country           TEXT,
-      first_name        TEXT,
-      middle_name       TEXT,
-      last_name         TEXT,
-      military_veteran  TEXT,
-      birth_month       INTEGER,
-      birth_day         INTEGER,
-      birth_year        INTEGER,
-      company           TEXT,
-      address_type      TEXT,
-      address1          TEXT,
-      address2          TEXT,
-      city              TEXT,
-      state             TEXT,
-      zip               TEXT,
-      phone             TEXT,
-      title             TEXT,
-      firm              TEXT,
-      \`function\`       TEXT,
-      interest          TEXT,
-      promo_code TEXT,
-      date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-  `);
-
-  db.run(`
-    CREATE TABLE IF NOT EXISTS join_requests (
-      id     INTEGER PRIMARY KEY AUTOINCREMENT,
-      name   TEXT,
-      email  TEXT,
-      phone  TEXT
-    )
-  `);
-});
-
-// 3. ROUTES
-
-// 3a. Static site routes
+// 3. STATIC SITE ROUTES
 app.get("/",           (req, res) => res.sendFile(path.join(__dirname, "index.html")));
 app.get("/join",       (req, res) => res.sendFile(path.join(__dirname, "join.html")));
 app.get("/membership", (req, res) => res.sendFile(path.join(__dirname, "membership.html")));
@@ -84,236 +26,190 @@ app.get("/documents",  (req, res) => res.sendFile(path.join(__dirname, "document
 app.get("/meetings",   (req, res) => res.sendFile(path.join(__dirname, "meetings.html")));
 app.get("/team",       (req, res) => res.sendFile(path.join(__dirname, "team.html")));
 app.get("/functions",  (req, res) => res.sendFile(path.join(__dirname, "functions.html")));
+app.get("/admin",      (req, res) => res.sendFile(path.join(__dirname, "admin.html")));
 
-// 3b. Admin UI
-app.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "admin.html"));
-});
+// 4. JOIN REQUESTS API
 
-// Get all join requests with formatted date
-app.get("/api/join_requests", (req, res) => {
-  db.all("SELECT *, datetime(id, 'unixepoch') AS date_submitted FROM join_requests", [], (err, rows) => {
-    if (err) {
-      console.error("Error fetching join requests:", err);
-      return res.status(500).json({ error: "Failed to fetch join requests." });
-    }
-    res.json(rows);
-  });
-});
-
-// GET single join request by ID (used by frontend: /api/join/:id)
-app.get("/api/join/:id", (req, res) => {
-  const id = req.params.id;
-  db.get("SELECT * FROM join_requests WHERE id = ?", [id], (err, row) => {
-    if (err) {
-      console.error("Error fetching join request:", err);
-      return res.status(500).json({ error: "Failed to fetch join request." });
-    }
-    if (!row) {
-      return res.status(404).json({ error: "Join request not found." });
-    }
-    res.json(row);
-  });
-});
-
-// UPDATE join request by ID (frontend expects PUT /api/join/:id)
-app.put("/api/join/:id", (req, res) => {
-  const id = req.params.id;
-  const fields = req.body;
-  const cols = Object.keys(fields);
-
-  if (!cols.length) {
-    return res.status(400).json({ error: "No fields to update." });
-  }
-
-  const assignments = cols.map(c => `\`${c}\` = ?`).join(", ");
-  const values = cols.map(c => fields[c]);
-
-  db.run(
-    `UPDATE join_requests SET ${assignments} WHERE id = ?`,
-    [...values, id],
-    function (err) {
-      if (err) {
-        console.error("Error updating join request:", err);
-        return res.status(500).json({ error: "Failed to update join request." });
-      }
-      res.json({ message: "Join request updated.", changes: this.changes });
-    }
-  );
-});
-
-// DELETE join request by ID (frontend expects DELETE /api/join/:id)
-app.delete("/api/join/:id", (req, res) => {
-  const id = req.params.id;
-  db.run("DELETE FROM join_requests WHERE id = ?", [id], function (err) {
-    if (err) {
-      console.error("Error deleting join request:", err);
-      return res.status(500).json({ error: "Failed to delete join request." });
-    }
-    res.json({ message: "Join request deleted.", changes: this.changes });
-  });
-});
-
-// 3c. Join form → INSERT into join_requests
-app.post("/join", (req, res) => {
+// Create a join request
+app.post("/join", async (req, res) => {
   const { name, email, phone } = req.body;
+  const { data, error } = await supabase
+    .from("join_requests")
+    .insert([{ name, email, phone }]);
 
-  const stmt = db.prepare(`
-    INSERT INTO join_requests (name, email, phone)
-    VALUES (?, ?, ?)
-  `);
-
-  stmt.run(name, email, phone, function(err) {
-    if (err) {
-      console.error("Error saving join request:", err);
-      return res.status(500).json({ error: "Failed to save join request." });
-    }
-    res.status(200).json({ message: "Join request saved.", id: this.lastID });
-  });
-
-  stmt.finalize();
+  if (error) {
+    console.error("Supabase insert error:", error);
+    return res.status(500).json({ error: "Failed to save join request." });
+  }
+  res.status(200).json({ message: "Join request saved.", id: data[0].id });
 });
 
+// Get all join requests
+app.get("/api/join_requests", async (req, res) => {
+  const { data, error } = await supabase
+    .from("join_requests")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-// 3d. Membership form → INSERT into membership
-app.post("/membership", (req, res) => {
-  db.get(`SELECT value FROM settings WHERE key = 'accept_membership'`, (err, row) => {
-    if (err) {
-      console.error("Setting check failed:", err);
-      return res.status(500).json({ error: "Internal server error." });
-    }
-    if (!row || row.value !== 'yes') {
-      return res.status(403).json({ error: "Form is not currently accepting responses." });
-    }
-
-    // Destructure request data
-    const {
-      email, country, first_name, middle_name, last_name,
-      military_veteran, birth_month, birth_day, birth_year,
-      company, address_type, address1, address2, city,
-      state, zip, phone, title, firm, function: func,
-      interest, promo_code
-    } = req.body;
-
-    const stmt = db.prepare(`
-      INSERT INTO membership (
-        email, country, first_name, middle_name, last_name,
-        military_veteran, birth_month, birth_day, birth_year,
-        company, address_type, address1, address2, city,
-        state, zip, phone, title, firm, \`function\`,
-        interest, promo_code
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-
-    stmt.run(
-      email, country, first_name, middle_name, last_name,
-      military_veteran, birth_month, birth_day, birth_year,
-      company, address_type, address1, address2, city,
-      state, zip, phone, title, firm, func,
-      interest, promo_code,
-      function(err) {
-        if (err) {
-          console.error("Error saving membership:", err);
-          return res.status(500).json({ error: "Failed to save membership." });
-        }
-        res.status(200).json({ message: "Membership saved.", id: this.lastID });
-      }
-    );
-    stmt.finalize();
-  });
+  if (error) {
+    console.error("Supabase fetch error:", error);
+    return res.status(500).json({ error: "Failed to fetch join requests." });
+  }
+  res.json(data);
 });
 
+// Get one join request
+app.get("/api/join/:id", async (req, res) => {
+  const { data, error } = await supabase
+    .from("join_requests")
+    .select("*")
+    .eq("id", req.params.id)
+    .single();
 
-
-// 3e. Membership JSON API for Admin
-
-// GET all members
-app.get("/api/members", (req, res) => {
-  db.all("SELECT * FROM membership", [], (err, rows) => {
-    if (err) {
-      console.error("Error fetching members:", err);
-      return res.status(500).json({ error: "Failed to fetch members." });
-    }
-    res.json(rows);
-  });
+  if (error || !data) {
+    return res.status(404).json({ error: "Join request not found." });
+  }
+  res.json(data);
 });
 
-// GET single member by ID
-app.get("/api/members/:id", (req, res) => {
-  const id = req.params.id;
-  db.get("SELECT * FROM membership WHERE id = ?", [id], (err, row) => {
-    if (err) {
-      console.error("Error fetching membership:", err);
-      return res.status(500).json({ error: "Failed to fetch membership." });
-    }
-    if (!row) {
-      return res.status(404).json({ error: "Membership not found." });
-    }
-    res.json(row);
-  });
+// Update a join request
+app.put("/api/join/:id", async (req, res) => {
+  const { data, error } = await supabase
+    .from("join_requests")
+    .update(req.body)
+    .eq("id", req.params.id);
+
+  if (error) {
+    console.error("Supabase update error:", error);
+    return res.status(500).json({ error: "Failed to update join request." });
+  }
+  res.json({ message: "Join request updated.", data });
 });
 
-// UPDATE a member
-app.put("/api/members/:id", (req, res) => {
-  const id     = req.params.id;
-  const fields = req.body;               // e.g. { first_name: "New", city: "Updated" }
-  const cols   = Object.keys(fields);
-  if (!cols.length) {
-    return res.status(400).json({ error: "No fields to update." });
+// Delete a join request
+app.delete("/api/join/:id", async (req, res) => {
+  const { error } = await supabase
+    .from("join_requests")
+    .delete()
+    .eq("id", req.params.id);
+
+  if (error) {
+    console.error("Supabase delete error:", error);
+    return res.status(500).json({ error: "Failed to delete join request." });
+  }
+  res.json({ message: "Join request deleted." });
+});
+
+// 5. MEMBERSHIP API
+
+// Submit membership form
+app.post("/membership", async (req, res) => {
+  // Check if form is accepting responses
+  const { data: setting, error: settingErr } = await supabase
+    .from("settings")
+    .select("value")
+    .eq("key", "accept_membership")
+    .single();
+
+  if (settingErr || setting.value !== "yes") {
+    return res.status(403).json({ error: "Form is not currently accepting responses." });
   }
 
-  const assignments = cols.map(c => `\`${c}\` = ?`).join(", ");
-  const values      = cols.map(c => fields[c]);
+  // Insert membership
+  const { data, error } = await supabase
+    .from("membership")
+    .insert([req.body]);
 
-  db.run(
-    `UPDATE membership SET ${assignments} WHERE id = ?`,
-    [...values, id],
-    function(err) {
-      if (err) {
-        console.error("Error updating member:", err);
-        return res.status(500).json({ error: "Failed to update member." });
-      }
-      res.json({ message: "Member updated.", changes: this.changes });
-    }
-  );
+  if (error) {
+    console.error("Supabase membership insert error:", error);
+    return res.status(500).json({ error: "Failed to save membership." });
+  }
+  res.status(200).json({ message: "Membership saved.", id: data[0].id });
 });
 
-// DELETE a member
-app.delete("/api/members/:id", (req, res) => {
-  const id = req.params.id;
-  db.run("DELETE FROM membership WHERE id = ?", id, function(err) {
-    if (err) {
-      console.error("Error deleting member:", err);
-      return res.status(500).json({ error: "Failed to delete member." });
-    }
-    res.json({ message: "Member deleted.", changes: this.changes });
-  });
-});
-// Get setting by key
-app.get("/api/settings/:key", (req, res) => {
-  const key = req.params.key;
-  db.get("SELECT value FROM settings WHERE key = ?", [key], (err, row) => {
-    if (err) return res.status(500).json({ error: "DB error" });
-    if (!row) return res.status(404).json({ error: "Setting not found" });
-    res.json({ value: row.value });
-  });
+// Get all members
+app.get("/api/members", async (req, res) => {
+  const { data, error } = await supabase.from("membership").select("*");
+  if (error) {
+    console.error("Supabase fetch members error:", error);
+    return res.status(500).json({ error: "Failed to fetch members." });
+  }
+  res.json(data);
 });
 
-// Update setting by key
-app.put("/api/settings/:key", (req, res) => {
-  const key = req.params.key;
-  const value = req.body.value;
-  db.run(
-    "UPDATE settings SET value = ? WHERE key = ?",
-    [value, key],
-    function(err) {
-      if (err) return res.status(500).json({ error: "Update failed" });
-      res.json({ message: "Setting updated", changes: this.changes });
-    }
-  );
+// Get one member
+app.get("/api/members/:id", async (req, res) => {
+  const { data, error } = await supabase
+    .from("membership")
+    .select("*")
+    .eq("id", req.params.id)
+    .single();
+
+  if (error || !data) {
+    return res.status(404).json({ error: "Member not found." });
+  }
+  res.json(data);
 });
 
-// 4. START SERVER
+// Update a member
+app.put("/api/members/:id", async (req, res) => {
+  const { data, error } = await supabase
+    .from("membership")
+    .update(req.body)
+    .eq("id", req.params.id);
+
+  if (error) {
+    console.error("Supabase update member error:", error);
+    return res.status(500).json({ error: "Failed to update member." });
+  }
+  res.json({ message: "Member updated.", data });
+});
+
+// Delete a member
+app.delete("/api/members/:id", async (req, res) => {
+  const { error } = await supabase
+    .from("membership")
+    .delete()
+    .eq("id", req.params.id);
+
+  if (error) {
+    console.error("Supabase delete member error:", error);
+    return res.status(500).json({ error: "Failed to delete member." });
+  }
+  res.json({ message: "Member deleted." });
+});
+
+// 6. SETTINGS API
+
+// Get a setting
+app.get("/api/settings/:key", async (req, res) => {
+  const { data, error } = await supabase
+    .from("settings")
+    .select("value")
+    .eq("key", req.params.key)
+    .single();
+
+  if (error || !data) {
+    return res.status(404).json({ error: "Setting not found." });
+  }
+  res.json({ value: data.value });
+});
+
+// Update a setting
+app.put("/api/settings/:key", async (req, res) => {
+  const { error } = await supabase
+    .from("settings")
+    .update({ value: req.body.value })
+    .eq("key", req.params.key);
+
+  if (error) {
+    console.error("Supabase update setting error:", error);
+    return res.status(500).json({ error: "Failed to update setting." });
+  }
+  res.json({ message: "Setting updated." });
+});
+
+// 7. START SERVER
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
