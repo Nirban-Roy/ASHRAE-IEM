@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin – Memberships</title>
+  <style>
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 6px; }
+    th { background: #f0f0f0; }
+    button { margin-right: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Membership Submissions</h1>
+  <table id="members-table">
+    <thead id="members-thead"></thead>
+    <tbody id="members-tbody"></tbody>
+  </table>
+
+  <script>
+    // Load and render all members
+    async function loadMembers() {
+      const res = await fetch('/api/members');
+      const members = await res.json();
+      const thead = document.getElementById('members-thead');
+      const tbody = document.getElementById('members-tbody');
+      thead.innerHTML = '';
+      tbody.innerHTML = '';
+
+      if (members.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="100%">No entries.</td></tr>';
+        return;
+      }
+
+      // Column headers
+      const cols = Object.keys(members[0]);
+      const headerRow = document.createElement('tr');
+      cols.forEach(c => {
+        const th = document.createElement('th');
+        th.textContent = c;
+        headerRow.appendChild(th);
+      });
+      const actionTh = document.createElement('th');
+      actionTh.textContent = 'Actions';
+      headerRow.appendChild(actionTh);
+      thead.appendChild(headerRow);
+
+      // Rows
+      members.forEach(mem => {
+        const tr = document.createElement('tr');
+        cols.forEach(c => {
+          const td = document.createElement('td');
+          td.textContent = mem[c];
+          td.dataset.field = c;
+          tr.appendChild(td);
+        });
+        // Actions cell
+        const act = document.createElement('td');
+        const del = document.createElement('button');
+        del.textContent = 'Delete';
+        del.onclick = () => deleteMember(mem.id);
+        act.appendChild(del);
+        const edt = document.createElement('button');
+        edt.textContent = 'Edit';
+        edt.onclick = () => enableEdit(tr, mem.id);
+        act.appendChild(edt);
+        tr.appendChild(act);
+        tbody.appendChild(tr);
+      });
+    }
+
+    // DELETE
+    async function deleteMember(id) {
+      if (!confirm(`Delete #${id}?`)) return;
+      const res = await fetch(`/api/members/${id}`, { method: 'DELETE' });
+      if (res.ok) loadMembers();
+      else alert('Delete failed');
+    }
+
+    // Switch row to editable inputs
+    function enableEdit(tr, id) {
+      tr.querySelectorAll('td[data-field]').forEach(td => {
+        const val = td.textContent;
+        td.innerHTML = `<input value="${val}" style="width:100px">`;
+      });
+      const actions = tr.lastElementChild;
+      actions.innerHTML = '';
+      const save = document.createElement('button');
+      save.textContent = 'Save';
+      save.onclick = () => saveEdit(tr, id);
+      actions.appendChild(save);
+      const cancel = document.createElement('button');
+      cancel.textContent = 'Cancel';
+      cancel.onclick = () => loadMembers();
+      actions.appendChild(cancel);
+    }
+
+    // PUT updates back to server
+    async function saveEdit(tr, id) {
+      const inputs = tr.querySelectorAll('td[data-field] input');
+      const payload = {};
+      inputs.forEach(inp => {
+        const field = inp.parentElement.dataset.field;
+        payload[field] = inp.value;
+      });
+      const res = await fetch(`/api/members/${id}`, {
+        method: 'PUT',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) loadMembers();
+      else alert('Save failed');
+    }
+
+    window.onload = loadMembers;
+  </script>
+</body>
+</html>
