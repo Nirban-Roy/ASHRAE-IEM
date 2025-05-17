@@ -84,6 +84,58 @@ app.get("/api/join_requests", (req, res) => {
     res.json(rows);
   });
 });
+// GET single join request by ID
+app.get("/api/join_requests/:id", (req, res) => {
+  const id = req.params.id;
+  db.get("SELECT * FROM join_requests WHERE id = ?", [id], (err, row) => {
+    if (err) {
+      console.error("Error fetching join request:", err);
+      return res.status(500).json({ error: "Failed to fetch join request." });
+    }
+    if (!row) {
+      return res.status(404).json({ error: "Join request not found." });
+    }
+    res.json(row);
+  });
+});
+
+// UPDATE a join request
+app.put("/api/join_requests/:id", (req, res) => {
+  const id = req.params.id;
+  const fields = req.body;
+  const cols = Object.keys(fields);
+  if (!cols.length) {
+    return res.status(400).json({ error: "No fields to update." });
+  }
+
+  const assignments = cols.map(c => `\`${c}\` = ?`).join(", ");
+  const values = cols.map(c => fields[c]);
+
+  db.run(
+    `UPDATE join_requests SET ${assignments} WHERE id = ?`,
+    [...values, id],
+    function (err) {
+      if (err) {
+        console.error("Error updating join request:", err);
+        return res.status(500).json({ error: "Failed to update join request." });
+      }
+      res.json({ message: "Join request updated.", changes: this.changes });
+    }
+  );
+});
+
+// DELETE a join request
+app.delete("/api/join_requests/:id", (req, res) => {
+  const id = req.params.id;
+  db.run("DELETE FROM join_requests WHERE id = ?", [id], function (err) {
+    if (err) {
+      console.error("Error deleting join request:", err);
+      return res.status(500).json({ error: "Failed to delete join request." });
+    }
+    res.json({ message: "Join request deleted.", changes: this.changes });
+  });
+});
+
 // 3c. Join form → INSERT into join_requests
 app.post("/join", (req, res) => {
   const { name, email, phone } = req.body;
@@ -148,6 +200,21 @@ app.get("/api/members", (req, res) => {
       return res.status(500).json({ error: "Failed to fetch members." });
     }
     res.json(rows);
+  });
+});
+
+// GET single member by ID
+app.get("/api/members/:id", (req, res) => {
+  const id = req.params.id;
+  db.get("SELECT * FROM membership WHERE id = ?", [id], (err, row) => {
+    if (err) {
+      console.error("Error fetching membership:", err);
+      return res.status(500).json({ error: "Failed to fetch membership." });
+    }
+    if (!row) {
+      return res.status(404).json({ error: "Membership not found." });
+    }
+    res.json(row);
   });
 });
 
